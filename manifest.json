@@ -1,0 +1,38 @@
+{
+    "manifest_version": "2.0",
+    "id": "quadro_avisos",
+    "name": "Quadro de Avisos",
+    "version": "1.1.0",
+    "namespace": "QuadroAvisos",
+    "description": "Avisos, comunicados e requisições de mudança para equipes no Zabbix.",
+    "author": "Leão",
+    "url": "https://github.com/leaoereno/quadro-avisos",
+    "actions": {
+        "quadro_avisos.dashboard": {
+            "class": "CControllerQuadroAvisosDashboard",
+            "view": "quadro_avisos.dashboard",
+            "layout": "layout.htmlpage"
+        },
+        "quadro_avisos.view": {
+            "class": "CControllerQuadroAvisosView",
+            "view": "quadro_avisos.view",
+            "layout": "layout.htmlpage"
+        },
+        "quadro_avisos.create": {
+            "class": "CControllerQuadroAvisosCreate",
+            "view": "quadro_avisos.create",
+            "layout": "layout.htmlpage"
+        },
+        "quadro_avisos.edit": {
+            "class": "CControllerQuadroAvisosEdit",
+            "view": "quadro_avisos.create",
+            "layout": "layout.htmlpage"
+        },
+        "quadro_avisos.save": {
+            "class": "CControllerQuadroAvisosSave"
+        },
+        "quadro_avisos.delete": {
+            "class": "CControllerQuadroAvisosDelete"
+        }
+    }
+}
