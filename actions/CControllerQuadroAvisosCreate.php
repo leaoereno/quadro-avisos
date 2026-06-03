@@ -4,9 +4,6 @@ namespace Modules\QuadroAvisos\Actions;
 
 use CController;
 use CControllerResponseData;
-use APP;
-use DB;
-use CWebUser;
 
 class CControllerQuadroAvisosCreate extends CController {
 
@@ -19,7 +16,7 @@ class CControllerQuadroAvisosCreate extends CController {
     }
 
     protected function checkPermissions(): bool {
-        return in_array(CWebUser::getType(), [USER_TYPE_ZABBIX_ADMIN, USER_TYPE_SUPER_ADMIN]);
+        return $this->getUserType() >= USER_TYPE_ZABBIX_ADMIN;
     }
 
     protected function doAction(): void {
@@ -33,9 +30,11 @@ class CControllerQuadroAvisosCreate extends CController {
             'fim'        => date('Y-m-d H:i:s', strtotime('+7 days')),
         ];
 
-        $grupos = DB::select_all(
-            "SELECT usrgrpid, name FROM usrgrp ORDER BY name"
-        ) ?? [];
+        $grupos = [];
+        $result = DBselect('SELECT usrgrpid, name FROM usrgrp ORDER BY name');
+        while ($row = DBfetch($result)) {
+            $grupos[] = $row;
+        }
 
         $this->setResponse(new CControllerResponseData([
             'aviso'  => $aviso,

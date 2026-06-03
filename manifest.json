@@ -1,5 +1,5 @@
 {
-    "manifest_version": "2.0",
+    "manifest_version": 2.0,
     "id": "quadro_avisos",
     "name": "Quadro de Avisos",
     "version": "1.1.0",
@@ -10,23 +10,19 @@
     "actions": {
         "quadro_avisos.dashboard": {
             "class": "CControllerQuadroAvisosDashboard",
-            "view": "quadro_avisos.dashboard",
-            "layout": "layout.htmlpage"
+            "view": "quadro.avisos.dashboard"
         },
         "quadro_avisos.view": {
             "class": "CControllerQuadroAvisosView",
-            "view": "quadro_avisos.view",
-            "layout": "layout.htmlpage"
+            "view": "quadro.avisos.view"
         },
         "quadro_avisos.create": {
             "class": "CControllerQuadroAvisosCreate",
-            "view": "quadro_avisos.create",
-            "layout": "layout.htmlpage"
+            "view": "quadro.avisos.create"
         },
         "quadro_avisos.edit": {
             "class": "CControllerQuadroAvisosEdit",
-            "view": "quadro_avisos.create",
-            "layout": "layout.htmlpage"
+            "view": "quadro.avisos.create"
         },
         "quadro_avisos.save": {
             "class": "CControllerQuadroAvisosSave"
@@ -34,5 +30,8 @@
         "quadro_avisos.delete": {
             "class": "CControllerQuadroAvisosDelete"
         }
+    },
+    "assets": {
+        "css": ["quadro_avisos.css"]
     }
 }

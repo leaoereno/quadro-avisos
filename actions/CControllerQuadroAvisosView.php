@@ -4,9 +4,6 @@ namespace Modules\QuadroAvisos\Actions;
 
 use CController;
 use CControllerResponseData;
-use CControllerResponseFatal;
-use APP;
-use DB;
 use CWebUser;
 
 class CControllerQuadroAvisosView extends CController {
@@ -20,43 +17,48 @@ class CControllerQuadroAvisosView extends CController {
     }
 
     protected function checkPermissions(): bool {
-        // Menu visível apenas para Admin e Super Admin
-        return in_array(CWebUser::getType(), [USER_TYPE_ZABBIX_ADMIN, USER_TYPE_SUPER_ADMIN]);
+        return $this->getUserType() >= USER_TYPE_ZABBIX_ADMIN;
     }
 
     protected function doAction(): void {
-        // Obtém grupos do usuário logado
-        $usrgrpids = $this->getUserGroupIds(CWebUser::$data['userid']);
+        $userid    = (int) CWebUser::$data['userid'];
+        $usrgrpids = $this->getUserGroupIds($userid);
+        $avisos    = [];
 
-        // Busca todos os avisos dos grupos do usuário (sem filtro de data para admin)
-        $avisos = [];
         if ($usrgrpids) {
-            $placeholders = implode(',', array_fill(0, count($usrgrpids), '?'));
-            $sql = "SELECT a.*, u.alias AS usuario_nome
-                    FROM quadro_avisos a
-                    LEFT JOIN users u ON u.userid = a.criado_por
-                    WHERE a.usrgrpid IN ($placeholders)
-                    ORDER BY a.criado_em DESC";
-            $avisos = DB::select_all($sql, $usrgrpids) ?? [];
+            $placeholders = implode(',', $usrgrpids);
+            $result = DBselect(
+                'SELECT a.id, a.titulo, a.conteudo, a.tipo_borda, a.usrgrpid,
+                        a.inicio, a.fim, a.criado_em, u.alias AS usuario_nome
+                 FROM quadro_avisos a
+                 LEFT JOIN users u ON u.userid = a.criado_por
+                 WHERE a.usrgrpid IN (' . $placeholders . ')
+                 ORDER BY a.criado_em DESC'
+            );
+            while ($row = DBfetch($result)) {
+                $avisos[] = $row;
+            }
         }
 
-        // Grupos disponíveis para o filtro/cadastro
-        $grupos = DB::select_all(
-            "SELECT usrgrpid, name FROM usrgrp ORDER BY name"
-        ) ?? [];
+        $grupos = [];
+        $result = DBselect('SELECT usrgrpid, name FROM usrgrp ORDER BY name');
+        while ($row = DBfetch($result)) {
+            $grupos[] = $row;
+        }
 
         $this->setResponse(new CControllerResponseData([
             'avisos'  => $avisos,
             'grupos'  => $grupos,
-            'user_id' => CWebUser::$data['userid'],
+            'user_id' => $userid,
         ]));
     }
 
     private function getUserGroupIds(int $userid): array {
-        $rows = DB::select_all(
-            "SELECT usrgrpid FROM users_groups WHERE userid = ?",
-            [$userid]
-        );
-        return $rows ? array_column($rows, 'usrgrpid') : [];
+        $ids = [];
+        $result = DBselect('SELECT usrgrpid FROM users_groups WHERE userid=' . $userid);
+        while ($row = DBfetch($result)) {
+            $ids[] = (int) $row['usrgrpid'];
+        }
+        return $ids;
     }
 }

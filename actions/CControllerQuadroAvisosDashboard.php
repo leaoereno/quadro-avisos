@@ -4,13 +4,8 @@ namespace Modules\QuadroAvisos\Actions;
 
 use CController;
 use CControllerResponseData;
-use DB;
 use CWebUser;
 
-/**
- * Controller público — exibe apenas avisos ATIVOS do grupo do usuário.
- * Acessível por todos os tipos de usuário (User, Admin, Super Admin).
- */
 class CControllerQuadroAvisosDashboard extends CController {
 
     protected function init(): void {
@@ -22,42 +17,44 @@ class CControllerQuadroAvisosDashboard extends CController {
     }
 
     protected function checkPermissions(): bool {
-        // Qualquer usuário autenticado pode ver
-        return CWebUser::isLoggedIn();
+        return $this->getUserType() >= USER_TYPE_ZABBIX_USER;
     }
 
     protected function doAction(): void {
         $userid    = (int) CWebUser::$data['userid'];
         $usrgrpids = $this->getUserGroupIds($userid);
+        $avisos    = [];
 
-        $avisos = [];
         if ($usrgrpids) {
-            $placeholders = implode(',', array_fill(0, count($usrgrpids), '?'));
-            $now    = date('Y-m-d H:i:s');
-            $params = array_merge($usrgrpids, [$now, $now]);
+            $placeholders = implode(',', $usrgrpids);
+            $now = zbxDateToTime('now');
+            $now_str = date('Y-m-d H:i:s');
 
-            $avisos = DB::select_all(
-                "SELECT a.*, u.alias AS usuario_nome
+            $result = DBselect(
+                'SELECT a.id, a.titulo, a.conteudo, a.tipo_borda, a.usrgrpid,
+                        a.inicio, a.fim, a.criado_em, u.alias AS usuario_nome
                  FROM quadro_avisos a
                  LEFT JOIN users u ON u.userid = a.criado_por
-                 WHERE a.usrgrpid IN ($placeholders)
-                   AND a.inicio <= ?
-                   AND a.fim    >= ?
-                 ORDER BY a.criado_em DESC",
-                $params
-            ) ?? [];
+                 WHERE a.usrgrpid IN (' . $placeholders . ')
+                   AND a.inicio <= ' . zbx_dbstr($now_str) . '
+                   AND a.fim    >= ' . zbx_dbstr($now_str) . '
+                 ORDER BY a.criado_em DESC'
+            );
+
+            while ($row = DBfetch($result)) {
+                $avisos[] = $row;
+            }
         }
 
-        $this->setResponse(new CControllerResponseData([
-            'avisos' => $avisos,
-        ]));
+        $this->setResponse(new CControllerResponseData(['avisos' => $avisos]));
     }
 
     private function getUserGroupIds(int $userid): array {
-        $rows = DB::select_all(
-            "SELECT usrgrpid FROM users_groups WHERE userid = ?",
-            [$userid]
-        );
-        return $rows ? array_column($rows, 'usrgrpid') : [];
+        $ids = [];
+        $result = DBselect('SELECT usrgrpid FROM users_groups WHERE userid=' . $userid);
+        while ($row = DBfetch($result)) {
+            $ids[] = (int) $row['usrgrpid'];
+        }
+        return $ids;
     }
 }
