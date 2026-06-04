@@ -2,11 +2,14 @@
     "manifest_version": 2.0,
     "id": "quadro_avisos",
     "name": "Quadro de Avisos",
-    "version": "1.1.0",
+    "version": "1.2.0",
     "namespace": "QuadroAvisos",
-    "description": "Avisos, comunicados e requisições de mudança para equipes no Zabbix.",
-    "author": "Leão",
+    "description": "Módulo de comunicados, requisições de mudança e eventos para equipes que utilizam o Zabbix. Permite cadastrar avisos com suporte a Markdown e HTML, agendamento de exibição, controle por grupo de usuários e visualização em cards temáticos. Desenvolvido por Rafael Leão.",
+    "author": "Rafael Leão",
     "url": "https://github.com/leaoereno/quadro-avisos",
+    "assets": {
+        "css": ["quadro_avisos.css"]
+    },
     "actions": {
         "quadro_avisos.dashboard": {
             "class": "CControllerQuadroAvisosDashboard",
@@ -30,8 +33,5 @@
         "quadro_avisos.delete": {
             "class": "CControllerQuadroAvisosDelete"
         }
-    },
-    "assets": {
-        "css": ["quadro_avisos.css"]
     }
 }

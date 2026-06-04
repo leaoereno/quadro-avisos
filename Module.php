@@ -19,18 +19,30 @@ class Module extends CModule {
             return;
         }
 
-        // ── 1. Visualização: submenu de "Monitoramento" — todos os usuários
+        // Visualizacao: submenu de Monitoramento — todos os usuarios
         $menu->findOrAdd(_('Monitoramento'))
             ->getSubMenu()
             ->add((new CMenuItem(_('Quadro de Avisos')))->setAction('quadro_avisos.dashboard'));
 
-        // ── 2. Administração: submenu de "Administração" — Admin e Super Admin
         if (!in_array(CWebUser::getType(), [USER_TYPE_ZABBIX_ADMIN, USER_TYPE_SUPER_ADMIN])) {
             return;
         }
 
-        $menu->findOrAdd(_('Administração'))
-            ->getSubMenu()
-            ->add((new CMenuItem(_('Quadro de Avisos')))->setAction('quadro_avisos.view'));
+        $qaAdminItem = (new CMenuItem(_('Quadro de Avisos')))
+            ->setAction('quadro_avisos.view')
+            ->setIcon('zi-support');
+
+        if (CWebUser::getType() === USER_TYPE_SUPER_ADMIN) {
+            // Super Admin: adiciona em Administracao
+            foreach ($menu->getMenuItems() as $item) {
+                if (bin2hex($item->getLabel()) === '41646d696e6973747261c3a7c3a36f') {
+                    $item->getSubMenu()->add($qaAdminItem);
+                    return;
+                }
+            }
+        }
+
+        // Admin tipo 2: adiciona ao final do menu principal
+        $menu->add($qaAdminItem);
     }
 }

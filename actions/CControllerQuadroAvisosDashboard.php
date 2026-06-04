@@ -32,10 +32,10 @@ class CControllerQuadroAvisosDashboard extends CController {
 
             $result = DBselect(
                 'SELECT a.id, a.titulo, a.conteudo, a.tipo_borda, a.usrgrpid,
-                        a.inicio, a.fim, a.criado_em, u.alias AS usuario_nome
+                        a.inicio, a.fim, a.criado_em, u.username AS usuario_nome
                  FROM quadro_avisos a
                  LEFT JOIN users u ON u.userid = a.criado_por
-                 WHERE a.usrgrpid IN (' . $placeholders . ')
+                 WHERE (a.usrgrpid IN (' . $placeholders . ') OR a.usrgrpid = 0)
                    AND a.inicio <= ' . zbx_dbstr($now_str) . '
                    AND a.fim    >= ' . zbx_dbstr($now_str) . '
                  ORDER BY a.criado_em DESC'

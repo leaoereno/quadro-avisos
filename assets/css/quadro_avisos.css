@@ -67,12 +67,12 @@
 
 .btn-create {
     background: var(--color-action-primary-bg, #1362b8);
-    color: var(--color-action-primary-text, #fff);
+    color: #ffffff !important;
     border-color: var(--color-action-primary-bg, #1362b8);
 }
 .btn-save {
     background: var(--color-action-primary-bg, #1362b8);
-    color: var(--color-action-primary-text, #fff);
+    color: #ffffff !important;
     border-color: var(--color-action-primary-bg, #1362b8);
 }
 .btn-cancel {

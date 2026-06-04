@@ -167,3 +167,18 @@
     });
 
 })();
+
+// Sobrescreve a renderização para suportar HTML puro + Markdown
+(function() {
+    function renderContent(raw) {
+        if (!raw) return '';
+        // Se começa com tag HTML, renderiza como HTML direto
+        var trimmed = raw.trim();
+        if (trimmed.charAt(0) === '<') {
+            return trimmed;
+        }
+        // Caso contrário, processa como Markdown
+        return window.marked ? window.marked.parse(trimmed) : trimmed;
+    }
+    window.qaRenderContent = renderContent;
+})();

@@ -21,19 +21,20 @@ class CControllerQuadroAvisosView extends CController {
     }
 
     protected function doAction(): void {
-        $userid    = (int) CWebUser::$data['userid'];
-        $usrgrpids = $this->getUserGroupIds($userid);
-        $avisos    = [];
+        $userid       = (int) CWebUser::$data['userid'];
+        $isSuperAdmin = $this->getUserType() === USER_TYPE_SUPER_ADMIN;
+        $usrgrpids    = $this->getUserGroupIds($userid);
+        $avisos       = [];
 
         if ($usrgrpids) {
             $placeholders = implode(',', $usrgrpids);
             $result = DBselect(
-                'SELECT a.id, a.titulo, a.conteudo, a.tipo_borda, a.usrgrpid,
-                        a.inicio, a.fim, a.criado_em, u.alias AS usuario_nome
-                 FROM quadro_avisos a
-                 LEFT JOIN users u ON u.userid = a.criado_por
-                 WHERE a.usrgrpid IN (' . $placeholders . ')
-                 ORDER BY a.criado_em DESC'
+                'SELECT a.id, a.titulo, a.conteudo, a.tipo_borda, a.usrgrpid,' .
+                ' a.inicio, a.fim, a.criado_em, a.criado_por, u.username AS usuario_nome' .
+                ' FROM quadro_avisos a' .
+                ' LEFT JOIN users u ON u.userid = a.criado_por' .
+                ' WHERE (a.usrgrpid IN (' . $placeholders . ') OR a.usrgrpid = 0)' .
+                ' ORDER BY a.criado_em DESC'
             );
             while ($row = DBfetch($result)) {
                 $avisos[] = $row;
@@ -47,9 +48,10 @@ class CControllerQuadroAvisosView extends CController {
         }
 
         $this->setResponse(new CControllerResponseData([
-            'avisos'  => $avisos,
-            'grupos'  => $grupos,
-            'user_id' => $userid,
+            'avisos'         => $avisos,
+            'grupos'         => $grupos,
+            'user_id'        => $userid,
+            'is_super_admin' => $isSuperAdmin,
         ]));
     }
 

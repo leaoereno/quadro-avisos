@@ -1,7 +1,9 @@
 <?php
 /**
- * @var array $data['avisos']
- * @var array $data['grupos']
+ * @var array  $data['avisos']
+ * @var array  $data['grupos']
+ * @var int    $data['user_id']
+ * @var bool   $data['is_super_admin']
  */
 $tipos_label = [
     'info'    => 'ℹ️ Informativo',
@@ -21,6 +23,9 @@ function qa_status(string $inicio, string $fim): string {
 function qa_status_label(string $s): string {
     return ['ativo' => '● Ativo', 'agendado' => '◷ Agendado', 'expirado' => '○ Expirado'][$s] ?? $s;
 }
+
+$isSuperAdmin = $data['is_super_admin'];
+$currentUser  = (int) $data['user_id'];
 ?>
 <div class="qa-page-wrap">
     <div class="qa-header">
@@ -54,13 +59,18 @@ function qa_status_label(string $s): string {
                 <option value="expirado"><?= _('Expirado') ?></option>
             </select>
         </div>
+
         <div class="qa-grid" id="qa-grid">
             <?php foreach ($data['avisos'] as $aviso):
-                $status  = qa_status($aviso['inicio'], $aviso['fim']);
-                $grpNome = '';
+                $status   = qa_status($aviso['inicio'], $aviso['fim']);
+                $grpNome  = '';
                 foreach ($data['grupos'] as $g) {
                     if ($g['usrgrpid'] == $aviso['usrgrpid']) { $grpNome = $g['name']; break; }
                 }
+                if ((int)$aviso['usrgrpid'] === 0) $grpNome = '🌐 Todos';
+
+                // Pode editar/deletar se for SuperAdmin ou se for o criador
+                $podeEditar = $isSuperAdmin || (int)$aviso['criado_por'] === $currentUser;
             ?>
                 <div class="qa-card qa-card--<?= htmlspecialchars($aviso['tipo_borda']) ?>"
                      data-tipo="<?= htmlspecialchars($aviso['tipo_borda']) ?>"
@@ -74,6 +84,7 @@ function qa_status_label(string $s): string {
                                 <?= qa_status_label($status) ?>
                             </span>
                         </div>
+                        <?php if ($podeEditar): ?>
                         <div class="qa-card-actions">
                             <a href="zabbix.php?action=quadro_avisos.edit&id=<?= (int)$aviso['id'] ?>"
                                class="qa-btn-icon" title="Editar">✏️</a>
@@ -81,6 +92,7 @@ function qa_status_label(string $s): string {
                                class="qa-btn-icon qa-btn-delete" title="Excluir"
                                onclick="return confirm('Confirma exclusão?')">🗑️</a>
                         </div>
+                        <?php endif ?>
                     </div>
                     <h3 class="qa-card-title"><?= htmlspecialchars($aviso['titulo']) ?></h3>
                     <div class="qa-card-body qa-rendered"
@@ -100,4 +112,46 @@ function qa_status_label(string $s): string {
         </div>
     <?php endif ?>
 </div>
-<script src="modules/quadro-avisos/assets/js/quadro_avisos.js"></script>
+
+<script>
+(function() {
+    function renderRaw(el) {
+        var raw = el.getAttribute('data-raw') || '';
+        if (!raw) return;
+        el.innerHTML = raw.trim().charAt(0) === '<'
+            ? raw
+            : (window.marked ? marked.parse(raw, {breaks: true, gfm: true}) : raw);
+        el.removeAttribute('data-raw');
+    }
+    function loadMarkedAndRender() {
+        if (window.marked) {
+            document.querySelectorAll('.qa-rendered[data-raw]').forEach(renderRaw);
+            return;
+        }
+        var s = document.createElement('script');
+        s.src = 'https://cdn.jsdelivr.net/npm/marked/marked.min.js';
+        s.onload = function() {
+            document.querySelectorAll('.qa-rendered[data-raw]').forEach(renderRaw);
+        };
+        document.head.appendChild(s);
+    }
+    function applyFilters() {
+        var search = (document.getElementById('qa-search') || {}).value || '';
+        var tipo   = (document.getElementById('qa-filter-tipo') || {}).value || '';
+        var status = (document.getElementById('qa-filter-status') || {}).value || '';
+        document.querySelectorAll('#qa-grid .qa-card').forEach(function(card) {
+            var ok = (!search || card.textContent.toLowerCase().includes(search.toLowerCase())) &&
+                     (!tipo   || card.dataset.tipo   === tipo) &&
+                     (!status || card.dataset.status === status);
+            card.classList.toggle('qa-hidden', !ok);
+        });
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+        loadMarkedAndRender();
+        ['qa-search','qa-filter-tipo','qa-filter-status'].forEach(function(id) {
+            var el = document.getElementById(id);
+            if (el) el.addEventListener('input', applyFilters);
+        });
+    });
+})();
+</script>

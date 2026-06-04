@@ -1,13 +1,9 @@
 <?php
-/**
- * @var array  $data['aviso']
- * @var array  $data['grupos']
- * @var string $data['modo']
- */
-$aviso = $data['aviso'];
-$modo  = $data['modo'];
-$title = $modo === 'edit' ? _('Editar Aviso') : _('Novo Aviso');
-$tipos = [
+$aviso  = $data['aviso'];
+$modo   = $data['modo'];
+$isSuperAdmin = $data['is_super_admin'];
+$title  = $modo === 'edit' ? _('Editar Aviso') : _('Novo Aviso');
+$tipos  = [
     'info'    => 'ℹ️ Informativo',
     'success' => '✅ Concluído / Resolvido',
     'warning' => '⚠️ Atenção',
@@ -47,16 +43,43 @@ $tipos = [
                     </select>
                 </div>
                 <div class="qa-form-group">
-                    <label for="usrgrpid"><?= _('Visível para o Grupo') ?></label>
-                    <select id="usrgrpid" name="usrgrpid" class="qa-input" required>
-                        <option value=""><?= _('Selecione...') ?></option>
-                        <?php foreach ($data['grupos'] as $g): ?>
-                            <option value="<?= (int)$g['usrgrpid'] ?>"
-                                <?= (int)$aviso['usrgrpid'] === (int)$g['usrgrpid'] ? 'selected' : '' ?>>
-                                <?= htmlspecialchars($g['name']) ?>
+                    <label for="usrgrpid">
+                        <?= _('Visível para') ?>
+                        <?php if ($isSuperAdmin): ?>
+                            <span class="qa-hint"><?= _('Super Admin pode selecionar múltiplos grupos') ?></span>
+                        <?php endif ?>
+                    </label>
+
+                    <?php if ($isSuperAdmin): ?>
+                        <!-- Super Admin: multiselect + opção Todos -->
+                        <select id="usrgrpid" name="usrgrpid[]" class="qa-input qa-multiselect"
+                                multiple size="6">
+                            <option value="0"
+                                <?= (int)$aviso['usrgrpid'] === 0 ? 'selected' : '' ?>>
+                                🌐 Todos os grupos
                             </option>
-                        <?php endforeach ?>
-                    </select>
+                            <?php foreach ($data['grupos'] as $g): ?>
+                                <option value="<?= (int)$g['usrgrpid'] ?>"
+                                    <?= (int)$aviso['usrgrpid'] === (int)$g['usrgrpid'] ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($g['name']) ?>
+                                </option>
+                            <?php endforeach ?>
+                        </select>
+                        <span class="qa-hint" style="margin-top:4px">
+                            <?= _('Ctrl+clique para selecionar múltiplos. Selecionar "Todos" ignora os demais.') ?>
+                        </span>
+                    <?php else: ?>
+                        <!-- Admin: select simples apenas com seus grupos -->
+                        <select id="usrgrpid" name="usrgrpid[]" class="qa-input" required>
+                            <option value=""><?= _('Selecione...') ?></option>
+                            <?php foreach ($data['grupos'] as $g): ?>
+                                <option value="<?= (int)$g['usrgrpid'] ?>"
+                                    <?= (int)$aviso['usrgrpid'] === (int)$g['usrgrpid'] ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($g['name']) ?>
+                                </option>
+                            <?php endforeach ?>
+                        </select>
+                    <?php endif ?>
                 </div>
             </div>
 
@@ -76,19 +99,22 @@ $tipos = [
             </div>
 
             <div class="qa-form-group">
-                <label for="conteudo"><?= _('Conteúdo') ?>
+                <label><?= _('Conteúdo') ?>
                     <span class="qa-hint"><?= _('Suporta Markdown e HTML') ?></span>
                 </label>
                 <div class="qa-editor-tabs">
-                    <button type="button" class="qa-tab active" onclick="qaSetTab('editor', event)"><?= _('Editor') ?></button>
-                    <button type="button" class="qa-tab" onclick="qaSetTab('preview', event)"><?= _('Preview') ?></button>
-                    <button type="button" class="qa-tab" onclick="qaSetTab('split', event)"><?= _('Dividido') ?></button>
+                    <button type="button" class="qa-tab active" id="tab-editor"
+                            onclick="qaSetTab('editor')"><?= _('Editor') ?></button>
+                    <button type="button" class="qa-tab" id="tab-preview"
+                            onclick="qaSetTab('preview')"><?= _('Pré-visualização') ?></button>
+                    <button type="button" class="qa-tab" id="tab-split"
+                            onclick="qaSetTab('split')"><?= _('Dividido') ?></button>
                 </div>
-                <div class="qa-editor-wrap">
-                    <textarea id="conteudo" name="conteudo" class="qa-textarea" rows="12"
-                              onkeyup="qaUpdatePreview()"
+                <div class="qa-editor-wrap" id="qa-editor-wrap">
+                    <textarea id="conteudo" name="conteudo" class="qa-textarea" rows="14"
+                              oninput="qaLivePreview()"
                               required><?= htmlspecialchars($aviso['conteudo']) ?></textarea>
-                    <div id="qa-preview-pane" class="qa-rendered qa-preview-pane" style="display:none"></div>
+                    <div id="qa-preview-pane" class="qa-preview-pane" style="display:none"></div>
                 </div>
             </div>
 
@@ -103,4 +129,96 @@ $tipos = [
         </form>
     </div>
 </div>
-<script src="modules/quadro-avisos/assets/js/quadro_avisos.js"></script>
+
+<style>
+.qa-multiselect {
+    min-height: 140px;
+    padding: 4px;
+}
+.qa-multiselect option {
+    padding: 5px 8px;
+    border-radius: 3px;
+    margin-bottom: 2px;
+}
+.qa-multiselect option:checked {
+    background: var(--color-action-primary-bg, #1362b8);
+    color: #fff;
+}
+.qa-editor-wrap { display: flex; }
+.qa-editor-wrap .qa-textarea { flex: 1; }
+.qa-preview-pane {
+    flex: 1;
+    padding: 12px 16px;
+    border: 1px solid var(--color-border, #ccc);
+    border-left: none;
+    background: var(--color-bg-surface, #fff);
+    overflow-y: auto;
+    min-height: 280px;
+    max-height: 480px;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--color-text-main, #333);
+}
+.qa-preview-pane h1,.qa-preview-pane h2,.qa-preview-pane h3{margin:8px 0 4px;font-weight:600}
+.qa-preview-pane p{margin:0 0 8px}
+.qa-preview-pane ul,.qa-preview-pane ol{margin:4px 0 8px 20px}
+.qa-preview-pane table{width:100%;border-collapse:collapse;font-size:12px}
+.qa-preview-pane th,.qa-preview-pane td{border:1px solid var(--color-border,#ddd);padding:6px 10px}
+.qa-preview-pane th{background:var(--color-bg-secondary,#f5f5f5)}
+.qa-preview-pane a{color:var(--color-link,#1362b8)}
+.qa-preview-pane code{background:var(--color-bg-secondary,#f0f0f0);padding:1px 5px;border-radius:3px;font-size:12px}
+</style>
+
+<script>
+(function() {
+    var currentTab = 'editor';
+    function loadMarked(cb) {
+        if (window.marked) { cb(); return; }
+        var s = document.createElement('script');
+        s.src = 'https://cdn.jsdelivr.net/npm/marked/marked.min.js';
+        s.onload = cb; document.head.appendChild(s);
+    }
+    function renderContent(raw) {
+        if (!raw) return '';
+        return raw.trim().charAt(0) === '<' ? raw : marked.parse(raw, {breaks:true, gfm:true});
+    }
+    window.qaLivePreview = function() {
+        if (currentTab === 'editor') return;
+        loadMarked(function() {
+            document.getElementById('qa-preview-pane').innerHTML =
+                renderContent(document.getElementById('conteudo').value || '');
+        });
+    };
+    window.qaSetTab = function(tab) {
+        currentTab = tab;
+        var textarea = document.getElementById('conteudo');
+        var pane     = document.getElementById('qa-preview-pane');
+        document.querySelectorAll('.qa-tab').forEach(function(t){t.classList.remove('active');});
+        document.getElementById('tab-'+tab).classList.add('active');
+        if (tab === 'editor') {
+            textarea.style.display = ''; pane.style.display = 'none';
+        } else if (tab === 'preview') {
+            textarea.style.display = 'none'; pane.style.display = '';
+        } else {
+            textarea.style.display = ''; pane.style.display = '';
+        }
+        if (tab !== 'editor') {
+            loadMarked(function() {
+                pane.innerHTML = renderContent(document.getElementById('conteudo').value || '');
+            });
+        }
+    };
+
+    // Se "Todos" for selecionado no multiselect, desmarca os outros
+    var sel = document.getElementById('usrgrpid');
+    if (sel && sel.multiple) {
+        sel.addEventListener('change', function() {
+            var opts = Array.from(sel.options);
+            var todosOpt = opts.find(function(o){ return o.value === '0'; });
+            if (todosOpt && todosOpt.selected) {
+                opts.forEach(function(o){ if (o.value !== '0') o.selected = false; });
+            }
+        });
+    }
+})();
+</script>
