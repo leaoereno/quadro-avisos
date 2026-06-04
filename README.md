@@ -156,3 +156,13 @@ Para habilitar o widget no dashboard, adicione ao `manifest.json`:
 
 > Nota: A API de widgets do Zabbix 7.0 pode exigir uma classe PHP adicional  
 > em `includes/classes/widget/`. Consulte a documentação oficial para detalhes.
+
+---
+
+## ☕ Buy me a Coffee
+
+Se este módulo foi útil para você ou sua equipe, considere apoiar o desenvolvimento!
+
+[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-apoiar-yellow?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://www.buymeacoffee.com/leaoereno)
+
+Qualquer contribuição é muito apreciada e ajuda a manter e evoluir projetos open-source como este. 🙏
