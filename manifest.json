@@ -1,10 +1,10 @@
 {
     "manifest_version": 2.0,
     "id": "quadro_avisos",
-    "name": "Quadro de Avisos",
-    "version": "1.2.0",
+    "name": "Notice Board",
+    "version": "1.3.0",
     "namespace": "QuadroAvisos",
-    "description": "Módulo de comunicados, requisições de mudança e eventos para equipes que utilizam o Zabbix. Permite cadastrar avisos com suporte a Markdown e HTML, agendamento de exibição, controle por grupo de usuários e visualização em cards temáticos. Desenvolvido por Rafael Leão.",
+    "description": "Notice board module for communicating incidents, change requests and events to teams using Zabbix. Supports Markdown/HTML, scheduling, user group filtering and themed cards. By Rafael Leão.",
     "author": "Rafael Leão",
     "url": "https://github.com/leaoereno/quadro-avisos",
     "assets": {

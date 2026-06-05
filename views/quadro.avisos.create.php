@@ -1,21 +1,22 @@
 <?php
-$aviso  = $data['aviso'];
-$modo   = $data['modo'];
+$aviso        = $data['aviso'];
+$modo         = $data['modo'];
 $isSuperAdmin = $data['is_super_admin'];
-$title  = $modo === 'edit' ? _('Editar Aviso') : _('Novo Aviso');
-$tipos  = [
-    'info'    => 'ℹ️ Informativo',
-    'success' => '✅ Concluído / Resolvido',
-    'warning' => '⚠️ Atenção',
-    'danger'  => '🚨 Crítico / Urgente',
-    'mudanca' => '🔧 Requisição de Mudança',
-    'evento'  => '📅 Evento / Manutenção',
+$title        = $modo === 'edit' ? _('Edit Notice') : _('New Notice');
+
+$tipos = [
+    'info'    => 'ℹ️ ' . _('Informational'),
+    'success' => '✅ ' . _('Resolved'),
+    'warning' => '⚠️ ' . _('Warning'),
+    'danger'  => '🚨 ' . _('Critical / Urgent'),
+    'mudanca' => '🔧 ' . _('Change Request'),
+    'evento'  => '📅 ' . _('Event / Maintenance'),
 ];
 ?>
 <div class="qa-page-wrap">
     <div class="qa-header">
         <div class="qa-header-title">
-            <a href="zabbix.php?action=quadro_avisos.view" class="qa-back-btn">← <?= _('Voltar') ?></a>
+            <a href="zabbix.php?action=quadro_avisos.view" class="qa-back-btn">← <?= _('Back') ?></a>
             <h1><?= $title ?></h1>
         </div>
     </div>
@@ -24,7 +25,7 @@ $tipos  = [
             <input type="hidden" name="id" value="<?= (int)$aviso['id'] ?>">
 
             <div class="qa-form-group">
-                <label for="titulo"><?= _('Título') ?> <span class="required">*</span></label>
+                <label for="titulo"><?= _('Title') ?> <span class="required">*</span></label>
                 <input type="text" id="titulo" name="titulo"
                        value="<?= htmlspecialchars($aviso['titulo']) ?>"
                        class="qa-input" required>
@@ -32,7 +33,7 @@ $tipos  = [
 
             <div class="qa-form-row">
                 <div class="qa-form-group">
-                    <label for="tipo_borda"><?= _('Tipo / Cor do Contorno') ?></label>
+                    <label for="tipo_borda"><?= _('Type / Border Color') ?></label>
                     <select id="tipo_borda" name="tipo_borda" class="qa-input">
                         <?php foreach ($tipos as $val => $label): ?>
                             <option value="<?= $val ?>"
@@ -44,9 +45,9 @@ $tipos  = [
                 </div>
                 <div class="qa-form-group">
                     <label for="usrgrpid">
-                        <?= _('Visível para') ?>
+                        <?= _('Visible to') ?>
                         <?php if ($isSuperAdmin): ?>
-                            <span class="qa-hint"><?= _('Super Admin pode selecionar múltiplos grupos') ?></span>
+                            <span class="qa-hint"><?= _('Super Admin can select multiple groups') ?></span>
                         <?php endif ?>
                     </label>
 
@@ -55,26 +56,26 @@ $tipos  = [
                         <select id="usrgrpid" name="usrgrpid[]" class="qa-input qa-multiselect"
                                 multiple size="6">
                             <option value="0"
-                                <?= (int)$aviso['usrgrpid'] === 0 ? 'selected' : '' ?>>
-                                🌐 Todos os grupos
+                                <?= !empty($aviso['para_todos']) ? 'selected' : '' ?>>
+                                🌐 <?= _('All user groups') ?>
                             </option>
                             <?php foreach ($data['grupos'] as $g): ?>
                                 <option value="<?= (int)$g['usrgrpid'] ?>"
-                                    <?= (int)$aviso['usrgrpid'] === (int)$g['usrgrpid'] ? 'selected' : '' ?>>
+                                    <?= (!empty($aviso['usrgrpid']) && (int)$aviso['usrgrpid'] === (int)$g['usrgrpid']) ? 'selected' : '' ?>>
                                     <?= htmlspecialchars($g['name']) ?>
                                 </option>
                             <?php endforeach ?>
                         </select>
                         <span class="qa-hint" style="margin-top:4px">
-                            <?= _('Ctrl+clique para selecionar múltiplos. Selecionar "Todos" ignora os demais.') ?>
+                            <?= _('Ctrl+click to select multiple. Selecting "All" ignores others.') ?>
                         </span>
                     <?php else: ?>
                         <!-- Admin: select simples apenas com seus grupos -->
                         <select id="usrgrpid" name="usrgrpid[]" class="qa-input" required>
-                            <option value=""><?= _('Selecione...') ?></option>
+                            <option value=""><?= _('Select...') ?></option>
                             <?php foreach ($data['grupos'] as $g): ?>
                                 <option value="<?= (int)$g['usrgrpid'] ?>"
-                                    <?= (int)$aviso['usrgrpid'] === (int)$g['usrgrpid'] ? 'selected' : '' ?>>
+                                    <?= (!empty($aviso['usrgrpid']) && (int)$aviso['usrgrpid'] === (int)$g['usrgrpid']) ? 'selected' : '' ?>>
                                     <?= htmlspecialchars($g['name']) ?>
                                 </option>
                             <?php endforeach ?>
@@ -85,13 +86,13 @@ $tipos  = [
 
             <div class="qa-form-row">
                 <div class="qa-form-group">
-                    <label for="inicio"><?= _('Exibir a partir de') ?></label>
+                    <label for="inicio"><?= _('Display from') ?></label>
                     <input type="datetime-local" id="inicio" name="inicio"
                            value="<?= date('Y-m-d\TH:i', strtotime($aviso['inicio'])) ?>"
                            class="qa-input" required>
                 </div>
                 <div class="qa-form-group">
-                    <label for="fim"><?= _('Exibir até') ?></label>
+                    <label for="fim"><?= _('Display until') ?></label>
                     <input type="datetime-local" id="fim" name="fim"
                            value="<?= date('Y-m-d\TH:i', strtotime($aviso['fim'])) ?>"
                            class="qa-input" required>
@@ -99,16 +100,16 @@ $tipos  = [
             </div>
 
             <div class="qa-form-group">
-                <label><?= _('Conteúdo') ?>
-                    <span class="qa-hint"><?= _('Suporta Markdown e HTML') ?></span>
+                <label><?= _('Content') ?>
+                    <span class="qa-hint"><?= _('Supports Markdown and HTML') ?></span>
                 </label>
                 <div class="qa-editor-tabs">
                     <button type="button" class="qa-tab active" id="tab-editor"
                             onclick="qaSetTab('editor')"><?= _('Editor') ?></button>
                     <button type="button" class="qa-tab" id="tab-preview"
-                            onclick="qaSetTab('preview')"><?= _('Pré-visualização') ?></button>
+                            onclick="qaSetTab('preview')"><?= _('Preview') ?></button>
                     <button type="button" class="qa-tab" id="tab-split"
-                            onclick="qaSetTab('split')"><?= _('Dividido') ?></button>
+                            onclick="qaSetTab('split')"><?= _('Split') ?></button>
                 </div>
                 <div class="qa-editor-wrap" id="qa-editor-wrap">
                     <textarea id="conteudo" name="conteudo" class="qa-textarea" rows="14"
@@ -120,10 +121,10 @@ $tipos  = [
 
             <div class="qa-form-actions">
                 <a href="zabbix.php?action=quadro_avisos.view" class="btn-action btn-cancel">
-                    <?= _('Cancelar') ?>
+                    <?= _('Cancel') ?>
                 </a>
                 <button type="submit" class="btn-action btn-save">
-                    <?= $modo === 'edit' ? _('Salvar Alterações') : _('Criar Aviso') ?>
+                    <?= $modo === 'edit' ? _('Save Changes') : _('Create Notice') ?>
                 </button>
             </div>
         </form>
@@ -131,15 +132,8 @@ $tipos  = [
 </div>
 
 <style>
-.qa-multiselect {
-    min-height: 140px;
-    padding: 4px;
-}
-.qa-multiselect option {
-    padding: 5px 8px;
-    border-radius: 3px;
-    margin-bottom: 2px;
-}
+.qa-multiselect { min-height: 140px; padding: 4px; }
+.qa-multiselect option { padding: 5px 8px; border-radius: 3px; margin-bottom: 2px; }
 .qa-multiselect option:checked {
     background: var(--color-action-primary-bg, #1362b8);
     color: #fff;
@@ -147,16 +141,12 @@ $tipos  = [
 .qa-editor-wrap { display: flex; }
 .qa-editor-wrap .qa-textarea { flex: 1; }
 .qa-preview-pane {
-    flex: 1;
-    padding: 12px 16px;
+    flex: 1; padding: 12px 16px;
     border: 1px solid var(--color-border, #ccc);
     border-left: none;
     background: var(--color-bg-surface, #fff);
-    overflow-y: auto;
-    min-height: 280px;
-    max-height: 480px;
-    font-size: 13px;
-    line-height: 1.6;
+    overflow-y: auto; min-height: 280px; max-height: 480px;
+    font-size: 13px; line-height: 1.6;
     color: var(--color-text-main, #333);
 }
 .qa-preview-pane h1,.qa-preview-pane h2,.qa-preview-pane h3{margin:8px 0 4px;font-weight:600}

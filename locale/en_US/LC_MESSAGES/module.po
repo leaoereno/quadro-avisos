@@ -1,0 +1,152 @@
+# Quadro de Avisos — Zabbix Module
+# English (United States) — default/source language
+msgid ""
+msgstr ""
+"Project-Id-Version: quadro_avisos 1.3.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en_US\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+# Menu
+msgid "Notice Board"
+msgstr "Notice Board"
+
+msgid "Monitoring"
+msgstr "Monitoring"
+
+# Notice types
+msgid "Informational"
+msgstr "Informational"
+
+msgid "Resolved"
+msgstr "Resolved"
+
+msgid "Warning"
+msgstr "Warning"
+
+msgid "Critical / Urgent"
+msgstr "Critical / Urgent"
+
+msgid "Change Request"
+msgstr "Change Request"
+
+msgid "Event / Maintenance"
+msgstr "Event / Maintenance"
+
+# Status
+msgid "Active"
+msgstr "Active"
+
+msgid "Scheduled"
+msgstr "Scheduled"
+
+msgid "Expired"
+msgstr "Expired"
+
+# Listing
+msgid "New Notice"
+msgstr "New Notice"
+
+msgid "No notices registered yet."
+msgstr "No notices registered yet."
+
+msgid "Filter notices..."
+msgstr "Filter notices..."
+
+msgid "All types"
+msgstr "All types"
+
+msgid "All statuses"
+msgstr "All statuses"
+
+msgid "All groups"
+msgstr "All groups"
+
+# Form
+msgid "Edit Notice"
+msgstr "Edit Notice"
+
+msgid "Back"
+msgstr "Back"
+
+msgid "Title"
+msgstr "Title"
+
+msgid "Type / Border Color"
+msgstr "Type / Border Color"
+
+msgid "Visible to"
+msgstr "Visible to"
+
+msgid "Super Admin can select multiple groups"
+msgstr "Super Admin can select multiple groups"
+
+msgid "All user groups"
+msgstr "All user groups"
+
+msgid "Ctrl+click to select multiple. Selecting \"All\" ignores others."
+msgstr "Ctrl+click to select multiple. Selecting \"All\" ignores others."
+
+msgid "Select..."
+msgstr "Select..."
+
+msgid "Display from"
+msgstr "Display from"
+
+msgid "Display until"
+msgstr "Display until"
+
+msgid "Content"
+msgstr "Content"
+
+msgid "Supports Markdown and HTML"
+msgstr "Supports Markdown and HTML"
+
+msgid "Editor"
+msgstr "Editor"
+
+msgid "Preview"
+msgstr "Preview"
+
+msgid "Split"
+msgstr "Split"
+
+msgid "Cancel"
+msgstr "Cancel"
+
+msgid "Save Changes"
+msgstr "Save Changes"
+
+msgid "Create Notice"
+msgstr "Create Notice"
+
+# Dashboard
+msgid "Notices, events and change requests for your team."
+msgstr "Notices, events and change requests for your team."
+
+msgid "No active notices for your group at this time."
+msgstr "No active notices for your group at this time."
+
+msgid "Click to expand"
+msgstr "Click to expand"
+
+msgid "Close"
+msgstr "Close"
+
+# Widget
+msgid "No active notices at this time."
+msgstr "No active notices at this time."
+
+msgid "Until"
+msgstr "Until"
+
+# Actions
+msgid "Edit"
+msgstr "Edit"
+
+msgid "Delete"
+msgstr "Delete"
+
+msgid "Confirm deletion?"
+msgstr "Confirm deletion?"

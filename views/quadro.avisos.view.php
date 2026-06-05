@@ -5,23 +5,29 @@
  * @var int    $data['user_id']
  * @var bool   $data['is_super_admin']
  */
+
+// Tipos com msgids em inglês para o sistema de tradução
 $tipos_label = [
-    'info'    => 'ℹ️ Informativo',
-    'success' => '✅ Concluído',
-    'warning' => '⚠️ Atenção',
-    'danger'  => '🚨 Crítico',
-    'mudanca' => '🔧 Req. Mudança',
-    'evento'  => '📅 Evento',
+    'info'    => 'ℹ️ ' . _('Informational'),
+    'success' => '✅ ' . _('Resolved'),
+    'warning' => '⚠️ ' . _('Warning'),
+    'danger'  => '🚨 ' . _('Critical / Urgent'),
+    'mudanca' => '🔧 ' . _('Change Request'),
+    'evento'  => '📅 ' . _('Event / Maintenance'),
 ];
 
 function qa_status(string $inicio, string $fim): string {
     $now = new DateTime();
-    if ($now < new DateTime($inicio)) return 'agendado';
-    if ($now > new DateTime($fim))    return 'expirado';
-    return 'ativo';
+    if ($now < new DateTime($inicio)) return 'scheduled';
+    if ($now > new DateTime($fim))    return 'expired';
+    return 'active';
 }
 function qa_status_label(string $s): string {
-    return ['ativo' => '● Ativo', 'agendado' => '◷ Agendado', 'expirado' => '○ Expirado'][$s] ?? $s;
+    return [
+        'active'    => '● ' . _('Active'),
+        'scheduled' => '◷ ' . _('Scheduled'),
+        'expired'   => '○ ' . _('Expired'),
+    ][$s] ?? $s;
 }
 
 $isSuperAdmin = $data['is_super_admin'];
@@ -31,45 +37,46 @@ $currentUser  = (int) $data['user_id'];
     <div class="qa-header">
         <div class="qa-header-title">
             <span class="qa-icon">📋</span>
-            <h1><?= _('Quadro de Avisos') ?></h1>
+            <h1><?= _('Notice Board') ?></h1>
         </div>
         <a href="zabbix.php?action=quadro_avisos.create" class="btn-action btn-create">
-            + <?= _('Novo Aviso') ?>
+            + <?= _('New Notice') ?>
         </a>
     </div>
 
     <?php if (empty($data['avisos'])): ?>
         <div class="qa-empty-state">
             <span>📭</span>
-            <p><?= _('Nenhum aviso cadastrado ainda.') ?></p>
+            <p><?= _('No notices registered yet.') ?></p>
         </div>
     <?php else: ?>
         <div class="qa-filters">
-            <input type="text" id="qa-search" placeholder="<?= _('Filtrar avisos...') ?>" class="qa-search-input">
+            <input type="text" id="qa-search" placeholder="<?= _('Filter notices...') ?>" class="qa-search-input">
             <select id="qa-filter-tipo" class="qa-filter-select">
-                <option value=""><?= _('Todos os tipos') ?></option>
+                <option value=""><?= _('All types') ?></option>
                 <?php foreach ($tipos_label as $val => $label): ?>
                     <option value="<?= $val ?>"><?= $label ?></option>
                 <?php endforeach ?>
             </select>
             <select id="qa-filter-status" class="qa-filter-select">
-                <option value=""><?= _('Todos os status') ?></option>
-                <option value="ativo"><?= _('Ativo') ?></option>
-                <option value="agendado"><?= _('Agendado') ?></option>
-                <option value="expirado"><?= _('Expirado') ?></option>
+                <option value=""><?= _('All statuses') ?></option>
+                <option value="active"><?= _('Active') ?></option>
+                <option value="scheduled"><?= _('Scheduled') ?></option>
+                <option value="expired"><?= _('Expired') ?></option>
             </select>
         </div>
 
         <div class="qa-grid" id="qa-grid">
             <?php foreach ($data['avisos'] as $aviso):
-                $status   = qa_status($aviso['inicio'], $aviso['fim']);
-                $grpNome  = '';
+                $status  = qa_status($aviso['inicio'], $aviso['fim']);
+                $grpNome = '';
                 foreach ($data['grupos'] as $g) {
                     if ($g['usrgrpid'] == $aviso['usrgrpid']) { $grpNome = $g['name']; break; }
                 }
-                if ((int)$aviso['usrgrpid'] === 0) $grpNome = '🌐 Todos';
-
-                // Pode editar/deletar se for SuperAdmin ou se for o criador
+                // CORREÇÃO: usa para_todos em vez de usrgrpid=0
+                if (!empty($aviso['para_todos'])) {
+                    $grpNome = '🌐 ' . _('All groups');
+                }
                 $podeEditar = $isSuperAdmin || (int)$aviso['criado_por'] === $currentUser;
             ?>
                 <div class="qa-card qa-card--<?= htmlspecialchars($aviso['tipo_borda']) ?>"
@@ -87,10 +94,10 @@ $currentUser  = (int) $data['user_id'];
                         <?php if ($podeEditar): ?>
                         <div class="qa-card-actions">
                             <a href="zabbix.php?action=quadro_avisos.edit&id=<?= (int)$aviso['id'] ?>"
-                               class="qa-btn-icon" title="Editar">✏️</a>
+                               class="qa-btn-icon" title="<?= _('Edit') ?>">✏️</a>
                             <a href="zabbix.php?action=quadro_avisos.delete&id=<?= (int)$aviso['id'] ?>"
-                               class="qa-btn-icon qa-btn-delete" title="Excluir"
-                               onclick="return confirm('Confirma exclusão?')">🗑️</a>
+                               class="qa-btn-icon qa-btn-delete" title="<?= _('Delete') ?>"
+                               onclick="return confirm('<?= _('Confirm deletion?') ?>')">🗑️</a>
                         </div>
                         <?php endif ?>
                     </div>

@@ -27,18 +27,18 @@ class CControllerQuadroAvisosDashboard extends CController {
 
         if ($usrgrpids) {
             $placeholders = implode(',', $usrgrpids);
-            $now = zbxDateToTime('now');
-            $now_str = date('Y-m-d H:i:s');
+            $now_str      = date('Y-m-d H:i:s');
 
             $result = DBselect(
-                'SELECT a.id, a.titulo, a.conteudo, a.tipo_borda, a.usrgrpid,
-                        a.inicio, a.fim, a.criado_em, u.username AS usuario_nome
-                 FROM quadro_avisos a
-                 LEFT JOIN users u ON u.userid = a.criado_por
-                 WHERE (a.usrgrpid IN (' . $placeholders . ') OR a.usrgrpid = 0)
-                   AND a.inicio <= ' . zbx_dbstr($now_str) . '
-                   AND a.fim    >= ' . zbx_dbstr($now_str) . '
-                 ORDER BY a.criado_em DESC'
+                'SELECT a.id, a.titulo, a.conteudo, a.tipo_borda, a.usrgrpid, a.para_todos,' .
+                '       a.inicio, a.fim, a.criado_em, u.username AS usuario_nome' .
+                ' FROM quadro_avisos a' .
+                ' LEFT JOIN users u ON u.userid = a.criado_por' .
+                // CORREÇÃO: usa para_todos=1 em vez de usrgrpid=0
+                ' WHERE (a.usrgrpid IN (' . $placeholders . ') OR a.para_todos = 1)' .
+                '   AND a.inicio <= ' . zbx_dbstr($now_str) .
+                '   AND a.fim    >= ' . zbx_dbstr($now_str) .
+                ' ORDER BY a.criado_em DESC'
             );
 
             while ($row = DBfetch($result)) {

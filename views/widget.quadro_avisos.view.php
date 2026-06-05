@@ -2,52 +2,45 @@
 /**
  * Widget para o Dashboard do Zabbix
  * Exibe os avisos ativos do grupo do usuário logado.
- *
- * Coloque este arquivo em:
- * modules/quadro_avisos/views/widget.quadro_avisos.view.php
- *
- * E registre o widget em manifest.json (veja README).
  */
 
 use CWebUser;
 
-/**
- * Helper para buscar avisos ativos do usuário no contexto do widget.
- * Em widgets, não há controller; fazemos a query direto na view.
- */
-$userid = (int) CWebUser::$data['userid'];
-
-// Grupos do usuário logado
-$usrgrpids_rows = DB::select_all(
-    "SELECT usrgrpid FROM users_groups WHERE userid = ?",
-    [$userid]
-) ?? [];
-$usrgrpids = array_column($usrgrpids_rows, 'usrgrpid');
+$userid    = (int) CWebUser::$data['userid'];
+$usrgrpids = [];
+$result    = DBselect('SELECT usrgrpid FROM users_groups WHERE userid=' . $userid);
+while ($row = DBfetch($result)) {
+    $usrgrpids[] = (int) $row['usrgrpid'];
+}
 
 $avisos = [];
 if ($usrgrpids) {
-    $placeholders = implode(',', array_fill(0, count($usrgrpids), '?'));
-    $params = array_merge($usrgrpids, [date('Y-m-d H:i:s'), date('Y-m-d H:i:s')]);
-    $avisos = DB::select_all(
-        "SELECT a.*, u.alias AS usuario_nome
-         FROM quadro_avisos a
-         LEFT JOIN users u ON u.userid = a.criado_por
-         WHERE a.usrgrpid IN ($placeholders)
-           AND a.inicio <= ?
-           AND a.fim    >= ?
-         ORDER BY a.criado_em DESC
-         LIMIT 20",
-        $params
-    ) ?? [];
+    $placeholders = implode(',', $usrgrpids);
+    $now_str      = date('Y-m-d H:i:s');
+    // CORREÇÃO: usa para_todos=1 em vez de usrgrpid=0
+    $result = DBselect(
+        'SELECT a.id, a.titulo, a.conteudo, a.tipo_borda, a.inicio, a.fim, a.criado_em,' .
+        '       u.username AS usuario_nome' .
+        ' FROM quadro_avisos a' .
+        ' LEFT JOIN users u ON u.userid = a.criado_por' .
+        ' WHERE (a.usrgrpid IN (' . $placeholders . ') OR a.para_todos = 1)' .
+        '   AND a.inicio <= ' . zbx_dbstr($now_str) .
+        '   AND a.fim    >= ' . zbx_dbstr($now_str) .
+        ' ORDER BY a.criado_em DESC' .
+        ' LIMIT 20'
+    );
+    while ($row = DBfetch($result)) {
+        $avisos[] = $row;
+    }
 }
 
 $tipos_label = [
-    'info'    => 'ℹ️ Informativo',
-    'success' => '✅ Concluído',
-    'warning' => '⚠️ Atenção',
-    'danger'  => '🚨 Crítico',
-    'mudanca' => '🔧 Req. Mudança',
-    'evento'  => '📅 Evento',
+    'info'    => 'ℹ️ ' . _('Informational'),
+    'success' => '✅ ' . _('Resolved'),
+    'warning' => '⚠️ ' . _('Warning'),
+    'danger'  => '🚨 ' . _('Critical / Urgent'),
+    'mudanca' => '🔧 ' . _('Change Request'),
+    'evento'  => '📅 ' . _('Event / Maintenance'),
 ];
 ?>
 
@@ -55,7 +48,7 @@ $tipos_label = [
 
     <?php if (empty($avisos)): ?>
         <div class="qa-widget-empty">
-            <span>📭</span> <?= _('Nenhum aviso ativo no momento.') ?>
+            <span>📭</span> <?= _('No active notices at this time.') ?>
         </div>
     <?php else: ?>
         <div class="qa-widget-list">
@@ -73,7 +66,7 @@ $tipos_label = [
                     <div class="qa-widget-title"><?= htmlspecialchars($aviso['titulo']) ?></div>
                     <div class="qa-widget-body qa-rendered" data-raw="<?= htmlspecialchars($aviso['conteudo']) ?>"></div>
                     <div class="qa-widget-validity">
-                        🗓️ Até <?= (new DateTime($aviso['fim']))->format('d/m/Y H:i') ?>
+                        🗓️ <?= _('Until') ?> <?= (new DateTime($aviso['fim']))->format('d/m/Y H:i') ?>
                     </div>
                 </div>
             <?php endforeach ?>
@@ -83,7 +76,6 @@ $tipos_label = [
 </div>
 
 <script>
-// Renderiza Markdown/HTML nos cards do widget após carregamento
 document.addEventListener('DOMContentLoaded', function() {
     if (typeof qaRenderAll === 'function') qaRenderAll();
 });

@@ -29,11 +29,12 @@ class CControllerQuadroAvisosView extends CController {
         if ($usrgrpids) {
             $placeholders = implode(',', $usrgrpids);
             $result = DBselect(
-                'SELECT a.id, a.titulo, a.conteudo, a.tipo_borda, a.usrgrpid,' .
+                'SELECT a.id, a.titulo, a.conteudo, a.tipo_borda, a.usrgrpid, a.para_todos,' .
                 ' a.inicio, a.fim, a.criado_em, a.criado_por, u.username AS usuario_nome' .
                 ' FROM quadro_avisos a' .
                 ' LEFT JOIN users u ON u.userid = a.criado_por' .
-                ' WHERE (a.usrgrpid IN (' . $placeholders . ') OR a.usrgrpid = 0)' .
+                // CORREÇÃO: usa para_todos=1 em vez de usrgrpid=0
+                ' WHERE (a.usrgrpid IN (' . $placeholders . ') OR a.para_todos = 1)' .
                 ' ORDER BY a.criado_em DESC'
             );
             while ($row = DBfetch($result)) {

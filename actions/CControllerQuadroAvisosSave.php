@@ -40,40 +40,72 @@ class CControllerQuadroAvisosSave extends CController {
         $inicio = zbx_dbstr(str_replace('T', ' ', $this->getInput('inicio')) . ':00');
         $fim    = zbx_dbstr(str_replace('T', ' ', $this->getInput('fim'))    . ':00');
 
-        // Grupos selecionados
-        $grpids = array_map('intval', (array) $this->getInput('usrgrpid', [0]));
-        $grpids = array_filter($grpids, function($v){ return $v >= 0; });
-        if (!$grpids) $grpids = [0];
+        // Grupos selecionados (apenas inteiros positivos)
+        $grpids = array_filter(
+            array_map('intval', (array) $this->getInput('usrgrpid', [])),
+            function ($v) { return $v >= 0; }
+        );
+        if (!$grpids) {
+            $grpids = [0];
+        }
 
-        // Se "Todos" (0) está selecionado, salva apenas 0
-        if (in_array(0, $grpids)) $grpids = [0];
-
-        // Admin não pode usar usrgrpid=0
-        if (!$isSuperAdmin) {
-            $grpids = array_filter($grpids, function($v){ return $v > 0; });
-            if (!$grpids) $grpids = [array_values($grpids)[0] ?? 0];
+        /*
+         * CORREÇÃO BUG FK:
+         * usrgrpid=0 antes violava a FK com usrgrp.usrgrpid.
+         * Agora usamos a coluna `para_todos=1` com usrgrpid=NULL
+         * para representar "visível para todos os grupos".
+         * Apenas Super Admin pode criar avisos para todos.
+         */
+        $paraTodos = 0;
+        if (in_array(0, $grpids)) {
+            if ($isSuperAdmin) {
+                $paraTodos = 1;
+                $grpids    = [null]; // usrgrpid será NULL no banco
+            } else {
+                // Admin não pode usar "todos" — remove o 0 e usa seus grupos
+                $grpids = array_filter($grpids, function ($v) { return $v > 0; });
+                if (!$grpids) {
+                    $this->setResponse(new CControllerResponseRedirect(
+                        (new CUrl('zabbix.php'))->setArgument('action', 'quadro_avisos.view')
+                    ));
+                    return;
+                }
+            }
         }
 
         if ($id === 0) {
-            // Cria um aviso para cada grupo selecionado
+            // Criação — um registro por grupo selecionado
             foreach ($grpids as $grpid) {
+                $grpSql = ($paraTodos || $grpid === null) ? 'NULL' : (int) $grpid;
                 DBexecute(
-                    'INSERT INTO quadro_avisos (titulo, conteudo, tipo_borda, criado_por, usrgrpid, inicio, fim)' .
-                    ' VALUES (' . $titulo . ',' . $conteudo . ',' . $tipoBorda . ',' .
-                    $userid . ',' . $grpid . ',' . $inicio . ',' . $fim . ')'
+                    'INSERT INTO quadro_avisos' .
+                    ' (titulo, conteudo, tipo_borda, criado_por, usrgrpid, para_todos, inicio, fim)' .
+                    ' VALUES (' .
+                        $titulo    . ',' .
+                        $conteudo  . ',' .
+                        $tipoBorda . ',' .
+                        $userid    . ',' .
+                        $grpSql    . ',' .
+                        (int) $paraTodos . ',' .
+                        $inicio    . ',' .
+                        $fim       .
+                    ')'
                 );
             }
         } else {
-            // Edição: atualiza o grupo para o primeiro selecionado
-            $grpid = reset($grpids);
+            // Edição — atualiza o primeiro grupo selecionado
+            $grpid  = reset($grpids);
+            $grpSql = ($paraTodos || $grpid === null) ? 'NULL' : (int) $grpid;
             DBexecute(
-                'UPDATE quadro_avisos SET titulo=' . $titulo .
-                ', conteudo=' . $conteudo .
+                'UPDATE quadro_avisos SET' .
+                '  titulo='     . $titulo    .
+                ', conteudo='   . $conteudo  .
                 ', tipo_borda=' . $tipoBorda .
-                ', usrgrpid=' . $grpid .
-                ', inicio=' . $inicio .
-                ', fim=' . $fim .
-                ' WHERE id=' . $id
+                ', usrgrpid='   . $grpSql    .
+                ', para_todos=' . (int) $paraTodos .
+                ', inicio='     . $inicio    .
+                ', fim='        . $fim       .
+                ' WHERE id='    . $id
             );
         }
 
