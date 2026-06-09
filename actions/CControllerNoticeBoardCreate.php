@@ -1,12 +1,12 @@
 <?php
 
-namespace Modules\QuadroAvisos\Actions;
+namespace Modules\NoticeBoardModule\Actions;
 
 use CController;
 use CControllerResponseData;
 use CWebUser;
 
-class CControllerQuadroAvisosCreate extends CController {
+class CControllerNoticeBoardCreate extends CController {
 
     protected function init(): void {
         $this->disableCsrfValidation();
@@ -24,7 +24,7 @@ class CControllerQuadroAvisosCreate extends CController {
         $isSuperAdmin = $this->getUserType() === USER_TYPE_SUPER_ADMIN;
         $userid       = (int) CWebUser::$data['userid'];
 
-        $aviso = [
+        $notice = [
             'id'         => 0,
             'titulo'     => '',
             'conteudo'   => '',
@@ -34,27 +34,30 @@ class CControllerQuadroAvisosCreate extends CController {
             'fim'        => date('Y-m-d H:i:s', strtotime('+7 days')),
         ];
 
-        // Admin só vê seus próprios grupos
         if ($isSuperAdmin) {
-            $grupos = [];
+            $groups = [];
             $result = DBselect('SELECT usrgrpid, name FROM usrgrp ORDER BY name');
-            while ($row = DBfetch($result)) { $grupos[] = $row; }
+            while ($row = DBfetch($result)) {
+                $groups[] = $row;
+            }
         } else {
-            $grupos = [];
+            $groups = [];
             $result = DBselect(
-                'SELECT g.usrgrpid, g.name FROM usrgrp g'.
-                ' INNER JOIN users_groups ug ON ug.usrgrpid = g.usrgrpid'.
+                'SELECT g.usrgrpid, g.name FROM usrgrp g' .
+                ' INNER JOIN users_groups ug ON ug.usrgrpid = g.usrgrpid' .
                 ' WHERE ug.userid=' . $userid .
                 ' ORDER BY g.name'
             );
-            while ($row = DBfetch($result)) { $grupos[] = $row; }
+            while ($row = DBfetch($result)) {
+                $groups[] = $row;
+            }
         }
 
         $this->setResponse(new CControllerResponseData([
-            'aviso'           => $aviso,
-            'grupos'          => $grupos,
-            'modo'            => 'create',
-            'is_super_admin'  => $isSuperAdmin,
+            'notice'         => $notice,
+            'groups'         => $groups,
+            'mode'           => 'create',
+            'is_super_admin' => $isSuperAdmin,
         ]));
     }
 }

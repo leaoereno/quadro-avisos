@@ -1,8 +1,0 @@
-UserType=2
-"Dashboards" => 44617368626f61726473
-"Monitoramento" => 4d6f6e69746f72616d656e746f
-"Serviços" => 5365727669c3a76f73
-"Inventário" => 496e76656e74c3a172696f
-"Relatórios" => 52656c6174c3b372696f73
-"Dados coletados" => 4461646f7320636f6c657461646f73
-"Alertas" => 416c6572746173

@@ -1,168 +1,184 @@
-# Quadro de Avisos — Módulo Zabbix 7.0 LTS
+# module-zbx-notice-board
 
-Módulo para comunicados, requisições de mudança e eventos que impactam as equipes que utilizam o Zabbix.
-
----
-
-## Funcionalidades
-
-### Área de Visualização (Dashboard Widget)
-- Widget disponível em **Dashboard → Quadro de Avisos**
-- Exibe apenas avisos **ativos** (dentro do período inicio/fim)
-- Respeita o **usergroup** do usuário logado
-- Cards com data, hora, usuário criador e tipo de borda colorida
-- CSS aderente ao tema do usuário (dark/blue/default/high-contrast)
-
-### Menu Administrativo
-- Novo menu **Quadro de Avisos** abaixo de **Dados Coletados**
-- Visível apenas para **Admin** (tipo 2) e **Super Admin** (tipo 3)
-- Lista todos os avisos do grupo com filtros de busca, tipo e status
-- Ações de criar, editar e excluir por card
-
-### Cadastro de Avisos
-- Suporte a **Markdown e HTML** no conteúdo
-- Editor com abas: Editor / Pré-visualização / Dividido
-- Preview em tempo real do card antes de salvar
-- Escolha de **tipo de contorno** do card:
-  - `info` — Informativo (azul)
-  - `success` — Concluído (verde)
-  - `warning` — Atenção (amarelo)
-  - `danger` — Crítico/Urgente (vermelho)
-  - `mudanca` — Requisição de Mudança (roxo)
-  - `evento` — Evento/Manutenção (ciano)
-- **Agendamento** de início e fim da exibição
-- Seleção do **grupo de usuários** que verá o aviso
+Zabbix 7.0 LTS module for communicating incidents, change requests and events
+to teams directly inside Zabbix. Supports Markdown/HTML, scheduling,
+user group filtering and themed cards.
 
 ---
 
-## Estrutura de arquivos
+## Features
+
+### Dashboard Widget
+- Widget available at **Dashboard > Notice Board**
+- Shows only **active** notices (within the inicio/fim window)
+- Respects the **usergroup** of the logged-in user
+- Click-to-expand modal with full content
+- CSS adapts to the user theme (dark / blue / default / high-contrast)
+
+### Admin Menu
+- New **Notice Board** menu item under **Monitoring** (all users) and **Administration** (Super Admin)
+- Visible to **Admin** (type 2) and **Super Admin** (type 3) in admin mode
+- List all notices with search, type and status filters
+- Create, edit and delete per card
+
+### Notice Form
+- **Markdown and HTML** support in content
+- Editor with tabs: Editor / Preview / Split
+- Live card preview before saving
+- Border type / severity:
+  - `info`    -- Informational (blue)
+  - `success` -- Resolved (green)
+  - `warning` -- Warning (yellow)
+  - `danger`  -- Critical / Urgent (red)
+  - `mudanca` -- Change Request (purple)
+  - `evento`  -- Event / Maintenance (cyan)
+- Scheduling: display from/until
+- User group selection (single for Admin, multi for Super Admin)
+
+### REST API (v1.4.0)
+- `GET  /api/avisos`       -- List notices with filters and pagination
+- `GET  /api/avisos/{id}`  -- Get notice by ID
+- `POST /api/avisos`       -- Create notice from external source
+- Bearer Token / X-Api-Token authentication
+- `source` field to identify remote origin (Grafana, ServiceNow, etc.)
+- Interactive Swagger UI at `api/docs.html`
+
+---
+
+## File Structure
 
 ```
-modules/quadro_avisos/
-├── manifest.json                          # Configuração do módulo
-├── Module.php                             # Bootstrap: menu, init
-├── install.sql                            # Script SQL de instalação
-├── actions/
-│   ├── CControllerQuadroAvisosView.php    # Listagem (admin)
-│   ├── CControllerQuadroAvisosCreate.php  # Formulário novo aviso
-│   ├── CControllerQuadroAvisosEdit.php    # Formulário editar aviso
-│   ├── CControllerQuadroAvisosSave.php    # Salvar (insert/update)
-│   └── CControllerQuadroAvisosDelete.php  # Excluir aviso
-├── views/
-│   ├── quadro_avisos.view.php             # View: listagem
-│   ├── quadro_avisos.create.php           # View: formulário
-│   └── widget.quadro_avisos.view.php      # View: widget dashboard
-└── assets/
-    ├── css/quadro_avisos.css              # Estilos (tema-aware)
-    └── js/quadro_avisos.js                # Markdown, preview, filtros
+modules/module-zbx-notice-board/
++-- manifest.json
++-- Module.php
++-- install.sql
++-- README.md
++-- actions/
+|   +-- CControllerNoticeBoardCreate.php
+|   +-- CControllerNoticeBoardDashboard.php
+|   +-- CControllerNoticeBoardDelete.php
+|   +-- CControllerNoticeBoardEdit.php
+|   +-- CControllerNoticeBoardSave.php
+|   +-- CControllerNoticeBoardView.php
++-- views/
+|   +-- notice.board.create.php
+|   +-- notice.board.dashboard.php
+|   +-- notice.board.view.php
+|   +-- widget.notice_board.view.php
++-- assets/
+|   +-- css/notice_board.css
+|   +-- js/notice_board.js
++-- locale/
+|   +-- en_US/LC_MESSAGES/module.po
+|   +-- pt_BR/LC_MESSAGES/module.po
++-- api/
+    +-- index.php
+    +-- docs.html
+    +-- migrate_v1.2_to_v1.3.1.sql
+    +-- migrate_v1.4.sql
 ```
 
 ---
 
-## Instalação
+## Installation
 
-### 1. Banco de dados
+### Fresh install
 
+#### 1. Database
 ```bash
-mysql -u root -p zabbix < /path/to/modules/quadro_avisos/install.sql
+mysql -u root -p zabbix < /path/to/modules/module-zbx-notice-board/install.sql
 ```
 
-### 2. Copiar o módulo
-
+#### 2. Copy the module
 ```bash
-cp -r quadro_avisos /usr/share/zabbix/modules/
-chown -R www-data:www-data /usr/share/zabbix/modules/quadro_avisos
+cp -r module-zbx-notice-board /usr/share/zabbix/modules/
+chown -R www-data:www-data /usr/share/zabbix/modules/module-zbx-notice-board
 ```
 
-O caminho pode variar conforme sua instalação:
-- Debian/Ubuntu: `/usr/share/zabbix/modules/`
-- RHEL/Rocky: `/usr/share/zabbix/modules/`
-- Docker (imagem oficial): `/var/www/html/modules/`
+#### 3. Enable in Zabbix
+1. Go to **Administration > General > Modules**
+2. Find **Notice Board** and click **Enable**
 
-### 3. Ativar no Zabbix
-
-1. Acesse **Administração → Geral → Módulos**
-2. Localize **Quadro de Avisos** na lista
-3. Clique em **Habilitar**
-
-### 4. Adicionar widget ao Dashboard
-
-1. Vá ao **Dashboard** desejado → **Editar**
-2. Clique em **Adicionar Widget**
-3. Escolha **Quadro de Avisos**
-4. Salve e feche o modo de edição
-
-> O widget exibe automaticamente apenas avisos ativos do grupo do usuário logado.
+#### 4. Add widget to Dashboard
+1. Go to a **Dashboard** > **Edit**
+2. Click **Add Widget** > choose **Notice Board**
 
 ---
 
-## Permissões
+## Upgrading from quadro-avisos
 
-| Ação                            | User | Admin | Super Admin |
-|---------------------------------|------|-------|-------------|
-| Ver widget no Dashboard         | ✅    | ✅     | ✅           |
-| Ver menu Quadro de Avisos       | ❌    | ✅     | ✅           |
-| Criar / Editar aviso            | ❌    | ✅ *   | ✅           |
-| Excluir aviso                   | ❌    | ✅ *   | ✅           |
-| Gerenciar qualquer grupo        | ❌    | ❌     | ✅           |
+### From v1.2 to v1.3.1 (adds para_todos column)
+```bash
+mysql -u root -p zabbix < api/migrate_v1.2_to_v1.3.1.sql
+```
 
-*\* Admin pode gerenciar apenas avisos do próprio usergroup.*
+### From v1.3.1 to v1.4.0 (renames table, adds source column)
+```bash
+mysql -u root -p zabbix < api/migrate_v1.4.sql
+```
 
 ---
 
-## Dependências JavaScript
+## Permissions
 
-O módulo carrega **marked.js** via CDN para renderizar Markdown:
-```
-https://cdn.jsdelivr.net/npm/marked/marked.min.js
-```
+| Action                  | User | Admin | Super Admin |
+|-------------------------|------|-------|-------------|
+| View widget             |  v   |   v   |      v      |
+| View Notice Board menu  |  x   |   v   |      v      |
+| Create / Edit notice    |  x   |  v*   |      v      |
+| Delete notice           |  x   |  v*   |      v      |
+| Manage any group        |  x   |   x   |      v      |
 
-Se o servidor não tiver acesso à internet, baixe o arquivo e coloque em:
-```
-modules/quadro_avisos/assets/js/marked.min.js
-```
-
-E altere em `quadro_avisos.js` a linha de carregamento para o caminho local.
+*Admin can only manage notices they created, within their own groups.*
 
 ---
 
-## Compatibilidade
+## API
+
+Configure the token in `api/index.php`:
+```php
+$API_TOKENS = [
+    'your-secret-token',
+];
+```
+
+Open the Swagger UI at:
+```
+http://your-zabbix/zabbix/modules/module-zbx-notice-board/api/docs.html
+```
+
+---
+
+## Dependencies
+
+- **marked.js** loaded via CDN for Markdown rendering.
+  For air-gap environments, download and place at `assets/js/marked.min.js`
+  then update the CDN URL in `assets/js/notice_board.js`.
+
+---
+
+## Compatibility
 
 - **Zabbix:** 7.0 LTS
 - **PHP:** 8.0+
-- **MySQL/MariaDB:** 5.7+ / 10.3+
-- **Navegadores:** Chrome 90+, Firefox 88+, Edge 90+
+- **MySQL / MariaDB:** 5.7+ / 10.3+
+- **Browsers:** Chrome 90+, Firefox 88+, Edge 90+
 
 ---
 
-## Registro do Widget no manifest.json (opcional)
+## License
 
-Para habilitar o widget no dashboard, adicione ao `manifest.json`:
+Modulo livre - fork and be happy
 
-```json
-"widgets": {
-    "quadro_avisos": {
-        "name": "Quadro de Avisos",
-        "description": "Exibe avisos ativos para o grupo do usuário logado.",
-        "class": "WidgetQuadroAvisos",
-        "js_class": "CWidgetQuadroAvisos",
-        "form": null,
-        "view": "widget.quadro_avisos.view",
-        "size": {"width": 4, "height": 4},
-        "min_user_type": 1
-    }
-}
-```
-
-> Nota: A API de widgets do Zabbix 7.0 pode exigir uma classe PHP adicional  
-> em `includes/classes/widget/`. Consulte a documentação oficial para detalhes.
+**Author:** Rafael M. A. Leao Ereno
+**Email:** leao@leaoereno.com.br
+**LinkedIn:** https://www.linkedin.com/in/leaoereno/
+**GitHub:** https://github.com/leaoereno/module-zbx-notice-board
 
 ---
 
-## ☕ Buy me a Coffee
+## Buy me a Coffee
 
-Se este módulo foi útil para você ou sua equipe, considere apoiar o desenvolvimento!
+If this module was useful for you or your team, consider supporting development!
 
-[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-apoiar-yellow?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://www.buymeacoffee.com/leaoereno)
-
-Qualquer contribuição é muito apreciada e ajuda a manter e evoluir projetos open-source como este. 🙏
+https://www.buymeacoffee.com/leaoereno

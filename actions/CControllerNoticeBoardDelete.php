@@ -1,13 +1,13 @@
 <?php
 
-namespace Modules\QuadroAvisos\Actions;
+namespace Modules\NoticeBoardModule\Actions;
 
 use CController;
 use CControllerResponseRedirect;
 use CWebUser;
 use CUrl;
 
-class CControllerQuadroAvisosDelete extends CController {
+class CControllerNoticeBoardDelete extends CController {
 
     protected function init(): void {
         $this->disableCsrfValidation();
@@ -26,19 +26,15 @@ class CControllerQuadroAvisosDelete extends CController {
         $isSuperAdmin = $this->getUserType() === USER_TYPE_SUPER_ADMIN;
         $userid       = (int) CWebUser::$data['userid'];
 
-        $aviso  = null;
-        $result = DBselect('SELECT id, criado_por FROM quadro_avisos WHERE id=' . $id);
-        if ($row = DBfetch($result)) {
-            $aviso = $row;
-        }
+        $result = DBselect('SELECT id, criado_por FROM notice_board WHERE id=' . $id);
+        $notice = DBfetch($result);
 
-        // Só deleta se existir e for o criador (ou Super Admin)
-        if ($aviso && ($isSuperAdmin || (int)$aviso['criado_por'] === $userid)) {
-            DBexecute('DELETE FROM quadro_avisos WHERE id=' . $id);
+        if ($notice && ($isSuperAdmin || (int) $notice['criado_por'] === $userid)) {
+            DBexecute('DELETE FROM notice_board WHERE id=' . $id);
         }
 
         $this->setResponse(new CControllerResponseRedirect(
-            (new CUrl('zabbix.php'))->setArgument('action', 'quadro_avisos.view')
+            (new CUrl('zabbix.php'))->setArgument('action', 'notice_board.view')
         ));
     }
 }

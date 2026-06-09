@@ -1,40 +1,40 @@
 {
     "manifest_version": 2.0,
-    "id": "quadro_avisos",
+    "id": "notice_board",
     "name": "Notice Board",
-    "version": "1.3.1",
-    "namespace": "QuadroAvisos",
+    "version": "1.4.0",
+    "namespace": "NoticeBoardModule",
     "description": "Notice board module for communicating incidents, change requests and events to teams using Zabbix. Supports Markdown/HTML, scheduling, user group filtering and themed cards.",
-    "author": "Rafael M. A. Leão Ereno",
+    "author": "Rafael M. A. Leao Ereno",
     "author_email": "leao@leaoereno.com.br",
     "author_linkedin": "https://www.linkedin.com/in/leaoereno/",
-    "url": "https://github.com/leaoereno/quadro-avisos",
+    "url": "https://github.com/leaoereno/module-zbx-notice-board",
     "license": "Modulo livre - fork and be happy",
     "assets": {
-        "css": ["quadro_avisos.css"]
+        "css": ["notice_board.css"]
     },
     "actions": {
-        "quadro_avisos.dashboard": {
-            "class": "CControllerQuadroAvisosDashboard",
-            "view": "quadro.avisos.dashboard"
+        "notice_board.dashboard": {
+            "class": "CControllerNoticeBoardDashboard",
+            "view": "notice.board.dashboard"
         },
-        "quadro_avisos.view": {
-            "class": "CControllerQuadroAvisosView",
-            "view": "quadro.avisos.view"
+        "notice_board.view": {
+            "class": "CControllerNoticeBoardView",
+            "view": "notice.board.view"
         },
-        "quadro_avisos.create": {
-            "class": "CControllerQuadroAvisosCreate",
-            "view": "quadro.avisos.create"
+        "notice_board.create": {
+            "class": "CControllerNoticeBoardCreate",
+            "view": "notice.board.create"
         },
-        "quadro_avisos.edit": {
-            "class": "CControllerQuadroAvisosEdit",
-            "view": "quadro.avisos.create"
+        "notice_board.edit": {
+            "class": "CControllerNoticeBoardEdit",
+            "view": "notice.board.create"
         },
-        "quadro_avisos.save": {
-            "class": "CControllerQuadroAvisosSave"
+        "notice_board.save": {
+            "class": "CControllerNoticeBoardSave"
         },
-        "quadro_avisos.delete": {
-            "class": "CControllerQuadroAvisosDelete"
+        "notice_board.delete": {
+            "class": "CControllerNoticeBoardDelete"
         }
     }
 }

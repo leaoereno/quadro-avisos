@@ -1,12 +1,12 @@
 <?php
 
-namespace Modules\QuadroAvisos\Actions;
+namespace Modules\NoticeBoardModule\Actions;
 
 use CController;
 use CControllerResponseData;
 use CWebUser;
 
-class CControllerQuadroAvisosView extends CController {
+class CControllerNoticeBoardView extends CController {
 
     protected function init(): void {
         $this->disableCsrfValidation();
@@ -23,34 +23,33 @@ class CControllerQuadroAvisosView extends CController {
     protected function doAction(): void {
         $userid       = (int) CWebUser::$data['userid'];
         $isSuperAdmin = $this->getUserType() === USER_TYPE_SUPER_ADMIN;
-        $usrgrpids    = $this->getUserGroupIds($userid);
-        $avisos       = [];
+        $grpids       = $this->getUserGroupIds($userid);
+        $notices      = [];
 
-        if ($usrgrpids) {
-            $placeholders = implode(',', $usrgrpids);
+        if ($grpids) {
+            $placeholders = implode(',', $grpids);
             $result = DBselect(
-                'SELECT a.id, a.titulo, a.conteudo, a.tipo_borda, a.usrgrpid, a.para_todos,' .
-                ' a.inicio, a.fim, a.criado_em, a.criado_por, u.username AS usuario_nome' .
-                ' FROM quadro_avisos a' .
-                ' LEFT JOIN users u ON u.userid = a.criado_por' .
-                // CORREÇÃO: usa para_todos=1 em vez de usrgrpid=0
-                ' WHERE (a.usrgrpid IN (' . $placeholders . ') OR a.para_todos = 1)' .
-                ' ORDER BY a.criado_em DESC'
+                'SELECT n.id, n.titulo, n.conteudo, n.tipo_borda, n.usrgrpid, n.para_todos,' .
+                ' n.inicio, n.fim, n.criado_em, n.criado_por, u.username AS usuario_nome' .
+                ' FROM notice_board n' .
+                ' LEFT JOIN users u ON u.userid = n.criado_por' .
+                ' WHERE (n.usrgrpid IN (' . $placeholders . ') OR n.para_todos = 1)' .
+                ' ORDER BY n.criado_em DESC'
             );
             while ($row = DBfetch($result)) {
-                $avisos[] = $row;
+                $notices[] = $row;
             }
         }
 
-        $grupos = [];
+        $groups = [];
         $result = DBselect('SELECT usrgrpid, name FROM usrgrp ORDER BY name');
         while ($row = DBfetch($result)) {
-            $grupos[] = $row;
+            $groups[] = $row;
         }
 
         $this->setResponse(new CControllerResponseData([
-            'avisos'         => $avisos,
-            'grupos'         => $grupos,
+            'notices'        => $notices,
+            'groups'         => $groups,
             'user_id'        => $userid,
             'is_super_admin' => $isSuperAdmin,
         ]));

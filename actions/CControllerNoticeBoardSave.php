@@ -1,13 +1,13 @@
 <?php
 
-namespace Modules\QuadroAvisos\Actions;
+namespace Modules\NoticeBoardModule\Actions;
 
 use CController;
 use CControllerResponseRedirect;
 use CWebUser;
 use CUrl;
 
-class CControllerQuadroAvisosSave extends CController {
+class CControllerNoticeBoardSave extends CController {
 
     protected function init(): void {
         $this->disableCsrfValidation();
@@ -37,36 +37,32 @@ class CControllerQuadroAvisosSave extends CController {
         $userid       = (int) CWebUser::$data['userid'];
         $isSuperAdmin = $this->getUserType() === USER_TYPE_SUPER_ADMIN;
 
-        $inicio = zbx_dbstr(str_replace('T', ' ', $this->getInput('inicio')) . ':00');
-        $fim    = zbx_dbstr(str_replace('T', ' ', $this->getInput('fim'))    . ':00');
+        // Parse datetime-local: input arrives as "YYYY-MM-DDTHH:MM" (no seconds)
+        $inicioRaw = str_replace('T', ' ', $this->getInput('inicio'));
+        $fimRaw    = str_replace('T', ' ', $this->getInput('fim'));
 
-        // Grupos selecionados (apenas inteiros positivos)
+        // Append seconds only if not already present
+        $inicio = zbx_dbstr(preg_match('/\d{2}:\d{2}:\d{2}$/', $inicioRaw) ? $inicioRaw : $inicioRaw . ':00');
+        $fim    = zbx_dbstr(preg_match('/\d{2}:\d{2}:\d{2}$/', $fimRaw)    ? $fimRaw    : $fimRaw    . ':00');
+
         $grpids = array_filter(
             array_map('intval', (array) $this->getInput('usrgrpid', [])),
-            function ($v) { return $v >= 0; }
+            fn($v) => $v >= 0
         );
         if (!$grpids) {
             $grpids = [0];
         }
 
-        /*
-         * CORREÇÃO BUG FK:
-         * usrgrpid=0 antes violava a FK com usrgrp.usrgrpid.
-         * Agora usamos a coluna `para_todos=1` com usrgrpid=NULL
-         * para representar "visível para todos os grupos".
-         * Apenas Super Admin pode criar avisos para todos.
-         */
         $paraTodos = 0;
         if (in_array(0, $grpids)) {
             if ($isSuperAdmin) {
                 $paraTodos = 1;
-                $grpids    = [null]; // usrgrpid será NULL no banco
+                $grpids    = [null];
             } else {
-                // Admin não pode usar "todos" — remove o 0 e usa seus grupos
-                $grpids = array_filter($grpids, function ($v) { return $v > 0; });
+                $grpids = array_filter($grpids, fn($v) => $v > 0);
                 if (!$grpids) {
                     $this->setResponse(new CControllerResponseRedirect(
-                        (new CUrl('zabbix.php'))->setArgument('action', 'quadro_avisos.view')
+                        (new CUrl('zabbix.php'))->setArgument('action', 'notice_board.view')
                     ));
                     return;
                 }
@@ -74,43 +70,41 @@ class CControllerQuadroAvisosSave extends CController {
         }
 
         if ($id === 0) {
-            // Criação — um registro por grupo selecionado
             foreach ($grpids as $grpid) {
                 $grpSql = ($paraTodos || $grpid === null) ? 'NULL' : (int) $grpid;
                 DBexecute(
-                    'INSERT INTO quadro_avisos' .
+                    'INSERT INTO notice_board' .
                     ' (titulo, conteudo, tipo_borda, criado_por, usrgrpid, para_todos, inicio, fim)' .
                     ' VALUES (' .
-                        $titulo    . ',' .
-                        $conteudo  . ',' .
-                        $tipoBorda . ',' .
-                        $userid    . ',' .
-                        $grpSql    . ',' .
-                        (int) $paraTodos . ',' .
-                        $inicio    . ',' .
-                        $fim       .
+                        $titulo              . ',' .
+                        $conteudo            . ',' .
+                        $tipoBorda           . ',' .
+                        $userid              . ',' .
+                        $grpSql              . ',' .
+                        (int) $paraTodos     . ',' .
+                        $inicio              . ',' .
+                        $fim                 .
                     ')'
                 );
             }
         } else {
-            // Edição — atualiza o primeiro grupo selecionado
             $grpid  = reset($grpids);
             $grpSql = ($paraTodos || $grpid === null) ? 'NULL' : (int) $grpid;
             DBexecute(
-                'UPDATE quadro_avisos SET' .
-                '  titulo='     . $titulo    .
-                ', conteudo='   . $conteudo  .
-                ', tipo_borda=' . $tipoBorda .
-                ', usrgrpid='   . $grpSql    .
+                'UPDATE notice_board SET' .
+                '  titulo='     . $titulo        .
+                ', conteudo='   . $conteudo       .
+                ', tipo_borda=' . $tipoBorda      .
+                ', usrgrpid='   . $grpSql         .
                 ', para_todos=' . (int) $paraTodos .
-                ', inicio='     . $inicio    .
-                ', fim='        . $fim       .
+                ', inicio='     . $inicio         .
+                ', fim='        . $fim            .
                 ' WHERE id='    . $id
             );
         }
 
         $this->setResponse(new CControllerResponseRedirect(
-            (new CUrl('zabbix.php'))->setArgument('action', 'quadro_avisos.view')
+            (new CUrl('zabbix.php'))->setArgument('action', 'notice_board.view')
         ));
     }
 }

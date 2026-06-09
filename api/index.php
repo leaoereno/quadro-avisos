@@ -16,7 +16,7 @@ declare(strict_types=1);
 
 // ── Bootstrap Zabbix ─────────────────────────────────────────────────────────
 // Ajuste o caminho conforme sua instalação do Zabbix
-$zabbixRoot = dirname(__DIR__, 3); // /usr/share/zabbix (3 níveis acima de modules/quadro_avisos/api)
+$zabbixRoot = dirname(__DIR__, 3); // /usr/share/zabbix (3 níveis acima de modules/notice_board/api)
 
 if (!file_exists($zabbixRoot . '/include/defines.inc.php')) {
     // Fallback: tenta caminhos comuns
@@ -189,7 +189,7 @@ function handleGetList(): void
     $whereSql = implode(' AND ', $where);
 
     // Contagem total para paginação
-    $countResult = DBselect("SELECT COUNT(*) AS total FROM quadro_avisos a WHERE $whereSql");
+    $countResult = DBselect("SELECT COUNT(*) AS total FROM notice_board a WHERE $whereSql");
     $totalRow    = DBfetch($countResult);
     $total       = (int)($totalRow['total'] ?? 0);
 
@@ -199,7 +199,7 @@ function handleGetList(): void
         '       a.inicio, a.fim, a.criado_em, a.atualizado_em,' .
         '       u.username AS criado_por_nome,' .
         '       g.name AS grupo_nome' .
-        ' FROM quadro_avisos a' .
+        ' FROM notice_board a' .
         ' LEFT JOIN users   u ON u.userid   = a.criado_por' .
         ' LEFT JOIN usrgrp  g ON g.usrgrpid = a.usrgrpid' .
         " WHERE $whereSql" .
@@ -241,7 +241,7 @@ function handleGetById(int $id): void
         '       a.inicio, a.fim, a.criado_em, a.atualizado_em,' .
         '       u.username AS criado_por_nome,' .
         '       g.name AS grupo_nome' .
-        ' FROM quadro_avisos a' .
+        ' FROM notice_board a' .
         ' LEFT JOIN users   u ON u.userid   = a.criado_por' .
         ' LEFT JOIN usrgrp  g ON g.usrgrpid = a.usrgrpid' .
         ' WHERE a.id = ' . $id
@@ -376,7 +376,7 @@ function handlePost(): void
     // ── INSERT ────────────────────────────────────────────────────────────────
     $sourceSql = $source ? zbx_dbstr($source) : 'NULL';
     DBexecute(
-        'INSERT INTO quadro_avisos' .
+        'INSERT INTO notice_board' .
         ' (titulo, conteudo, tipo_borda, criado_por, usrgrpid, para_todos, inicio, fim, source)' .
         ' VALUES (' .
             zbx_dbstr($titulo)    . ',' .
@@ -400,7 +400,7 @@ function handlePost(): void
         '       a.inicio, a.fim, a.criado_em, a.atualizado_em,' .
         '       u.username AS criado_por_nome,' .
         '       g.name AS grupo_nome' .
-        ' FROM quadro_avisos a' .
+        ' FROM notice_board a' .
         ' LEFT JOIN users   u ON u.userid   = a.criado_por' .
         ' LEFT JOIN usrgrp  g ON g.usrgrpid = a.usrgrpid' .
         ' WHERE a.id = ' . (int)$newId
