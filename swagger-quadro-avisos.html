@@ -3,143 +3,140 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Quadro de Avisos — API Docs</title>
+<title>Quadro de Avisos - API Docs</title>
 <style>
   :root {
-    --bg: #0d1117;
-    --surface: #161b22;
-    --surface2: #1c2128;
-    --border: #30363d;
-    --text: #e6edf3;
-    --muted: #7d8590;
-    --accent: #58a6ff;
-    --green: #3fb950;
-    --green-bg: #0f2d17;
-    --green-border: #1a4f27;
-    --blue: #58a6ff;
-    --blue-bg: #0c2040;
-    --blue-border: #1158a8;
-    --orange: #d29922;
-    --orange-bg: #2d1f00;
-    --red: #f85149;
-    --red-bg: #2d1215;
-    --purple: #bc8cff;
-    --purple-bg: #1e0f3a;
+    --bg: #0d1117; --surface: #161b22; --surface2: #1c2128; --border: #30363d;
+    --text: #e6edf3; --muted: #7d8590; --accent: #58a6ff;
+    --green: #3fb950; --green-bg: #0f2d17; --green-border: #1a4f27;
+    --blue: #58a6ff; --blue-bg: #0c2040; --blue-border: #1158a8;
+    --orange: #d29922; --orange-bg: #2d1f00;
+    --red: #f85149; --red-bg: #2d1215;
+    --purple: #bc8cff; --purple-bg: #1e0f3a;
     --cyan: #39d0d8;
-    --badge-info: #1a6fa8;
-    --badge-success: #1a5c2a;
-    --badge-warn: #5c3d00;
-    --badge-danger: #5c1a1a;
-    --badge-mudanca: #3d1a6b;
-    --badge-evento: #005c5f;
-    --mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+    --mono: 'JetBrains Mono','Fira Code','Cascadia Code',monospace;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: var(--bg); color: var(--text); font-family: -apple-system, 'Segoe UI', sans-serif; font-size: 14px; line-height: 1.6; }
-
-  /* LAYOUT */
+  body { background: var(--bg); color: var(--text); font-family: -apple-system,'Segoe UI',sans-serif; font-size: 14px; line-height: 1.6; }
   .layout { display: flex; min-height: 100vh; }
   .sidebar { width: 260px; background: var(--surface); border-right: 1px solid var(--border); position: sticky; top: 0; height: 100vh; overflow-y: auto; flex-shrink: 0; }
   .main { flex: 1; max-width: 900px; padding: 40px 48px; }
-
-  /* SIDEBAR */
   .sidebar-logo { padding: 20px 20px 16px; border-bottom: 1px solid var(--border); }
-  .sidebar-logo h1 { font-size: 13px; font-weight: 600; color: var(--text); letter-spacing: 0.02em; }
+  .sidebar-logo h1 { font-size: 13px; font-weight: 600; color: var(--text); letter-spacing: .02em; }
   .sidebar-logo .version { display: inline-block; font-size: 10px; background: var(--blue-bg); color: var(--blue); border: 1px solid var(--blue-border); border-radius: 20px; padding: 1px 8px; margin-top: 4px; font-family: var(--mono); }
   .sidebar-section { padding: 8px 0; border-bottom: 1px solid var(--border); }
-  .sidebar-section-title { font-size: 10px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; padding: 6px 20px 4px; }
-  .sidebar-item { display: flex; align-items: center; gap: 8px; padding: 6px 20px; cursor: pointer; border-radius: 0; transition: background 0.15s; text-decoration: none; color: var(--text); font-size: 13px; }
-  .sidebar-item:hover { background: rgba(255,255,255,0.04); }
-  .sidebar-item.active { background: rgba(88,166,255,0.08); color: var(--blue); }
+  .sidebar-section-title { font-size: 10px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; padding: 6px 20px 4px; }
+  .sidebar-item { display: flex; align-items: center; gap: 8px; padding: 6px 20px; cursor: pointer; text-decoration: none; color: var(--text); font-size: 13px; transition: background .15s; }
+  .sidebar-item:hover { background: rgba(255,255,255,.04); }
+  .sidebar-item.active { background: rgba(88,166,255,.08); color: var(--blue); }
   .method-pill { font-size: 10px; font-weight: 700; font-family: var(--mono); padding: 1px 6px; border-radius: 3px; min-width: 38px; text-align: center; flex-shrink: 0; }
-  .pill-get    { background: #0c2040; color: #58a6ff; border: 1px solid #1158a8; }
-  .pill-post   { background: #0f2d17; color: #3fb950; border: 1px solid #1a4f27; }
+  .pill-get  { background: #0c2040; color: #58a6ff; border: 1px solid #1158a8; }
+  .pill-post { background: #0f2d17; color: #3fb950; border: 1px solid #1a4f27; }
+
+  /* CONFIG PANEL */
+  .config-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 20px 24px; margin-bottom: 32px; }
+  .config-panel-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .config-panel-header h3 { font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+  .config-saved-badge { font-size: 11px; font-family: var(--mono); background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); border-radius: 20px; padding: 2px 10px; display: none; }
+  .config-saved-badge.visible { display: inline-block; }
+  .config-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .config-field label { display: block; font-size: 11px; color: var(--muted); margin-bottom: 5px; font-family: var(--mono); letter-spacing: .03em; }
+  .config-field input { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 5px; color: var(--text); font-size: 12px; font-family: var(--mono); padding: 8px 12px; outline: none; transition: border-color .15s; }
+  .config-field input:focus { border-color: var(--accent); }
+  .config-field input.valid   { border-color: var(--green); }
+  .config-field input.invalid { border-color: var(--red); }
+  .config-actions { display: flex; align-items: center; gap: 10px; margin-top: 14px; }
+  .btn-save-cfg { background: var(--blue); color: #fff; border: none; border-radius: 5px; padding: 7px 18px; font-size: 13px; font-weight: 600; cursor: pointer; transition: opacity .15s; }
+  .btn-save-cfg:hover { opacity: .85; }
+  .btn-clear-cfg { background: none; color: var(--muted); border: 1px solid var(--border); border-radius: 5px; padding: 7px 14px; font-size: 12px; cursor: pointer; transition: color .15s, border-color .15s; }
+  .btn-clear-cfg:hover { color: var(--red); border-color: var(--red); }
+  .config-hint { font-size: 11px; color: var(--muted); margin-top: 10px; line-height: 1.6; }
+  .config-hint code { font-family: var(--mono); background: var(--surface2); border: 1px solid var(--border); padding: 1px 5px; border-radius: 3px; color: var(--cyan); font-size: 10px; }
+
+  /* STATUS INDICATOR na sidebar */
+  .cfg-status { font-size: 10px; padding: 4px 20px 8px; }
+  .cfg-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; margin-right: 5px; background: var(--muted); vertical-align: middle; }
+  .cfg-dot.ok { background: var(--green); }
+  .cfg-label { color: var(--muted); font-size: 11px; vertical-align: middle; }
 
   /* PAGE HEADER */
   .page-header { margin-bottom: 40px; padding-bottom: 24px; border-bottom: 1px solid var(--border); }
-  .page-header h2 { font-size: 26px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+  .page-header h2 { font-size: 26px; font-weight: 700; margin-bottom: 6px; }
   .page-header p { color: var(--muted); font-size: 14px; max-width: 560px; }
   .header-badges { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
   .badge { font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 20px; border: 1px solid; font-family: var(--mono); }
-  .badge-blue  { background: var(--blue-bg);   color: var(--blue);   border-color: var(--blue-border); }
-  .badge-green { background: var(--green-bg);  color: var(--green);  border-color: var(--green-border); }
-  .badge-orange{ background: var(--orange-bg); color: var(--orange); border-color: #5c3d00; }
+  .badge-blue   { background: var(--blue-bg);   color: var(--blue);   border-color: var(--blue-border); }
+  .badge-green  { background: var(--green-bg);  color: var(--green);  border-color: var(--green-border); }
+  .badge-orange { background: var(--orange-bg); color: var(--orange); border-color: #5c3d00; }
 
   /* ENDPOINT CARD */
   .endpoint { margin-bottom: 32px; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
-  .endpoint-header { display: flex; align-items: center; gap: 12px; padding: 14px 20px; cursor: pointer; user-select: none; background: var(--surface); transition: background 0.15s; }
+  .endpoint-header { display: flex; align-items: center; gap: 12px; padding: 14px 20px; cursor: pointer; user-select: none; background: var(--surface); transition: background .15s; }
   .endpoint-header:hover { background: var(--surface2); }
   .endpoint-method { font-size: 12px; font-weight: 700; font-family: var(--mono); padding: 3px 10px; border-radius: 4px; min-width: 52px; text-align: center; }
   .m-get  { background: #0c2040; color: #58a6ff; border: 1px solid #1158a8; }
   .m-post { background: #0f2d17; color: #3fb950; border: 1px solid #1a4f27; }
-  .endpoint-path { font-family: var(--mono); font-size: 14px; color: var(--text); font-weight: 500; }
+  .endpoint-path { font-family: var(--mono); font-size: 14px; font-weight: 500; }
   .endpoint-desc { color: var(--muted); font-size: 13px; margin-left: auto; }
-  .expand-icon { color: var(--muted); font-size: 12px; transition: transform 0.2s; margin-left: 4px; }
+  .expand-icon { color: var(--muted); font-size: 12px; transition: transform .2s; margin-left: 4px; }
   .endpoint-body { display: none; padding: 24px; background: var(--surface2); border-top: 1px solid var(--border); }
   .endpoint-body.open { display: block; }
 
-  /* SECTIONS INSIDE ENDPOINT */
-  .section-title { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin: 20px 0 10px; }
+  .section-title { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: 20px 0 10px; }
   .section-title:first-child { margin-top: 0; }
 
-  /* PARAMS TABLE */
   .params-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  .params-table th { text-align: left; padding: 6px 12px; background: var(--surface); color: var(--muted); font-weight: 500; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; border-bottom: 1px solid var(--border); }
-  .params-table td { padding: 8px 12px; border-bottom: 1px solid rgba(48,54,61,0.5); vertical-align: top; }
+  .params-table th { text-align: left; padding: 6px 12px; background: var(--surface); color: var(--muted); font-weight: 500; font-size: 11px; text-transform: uppercase; letter-spacing: .06em; border-bottom: 1px solid var(--border); }
+  .params-table td { padding: 8px 12px; border-bottom: 1px solid rgba(48,54,61,.5); vertical-align: top; }
   .params-table tr:last-child td { border-bottom: none; }
-  .param-name { font-family: var(--mono); color: var(--cyan); font-size: 12px; }
-  .param-type { font-family: var(--mono); font-size: 11px; color: var(--purple); background: var(--purple-bg); padding: 1px 6px; border-radius: 3px; }
+  .param-name     { font-family: var(--mono); color: var(--cyan); font-size: 12px; }
+  .param-type     { font-family: var(--mono); font-size: 11px; color: var(--purple); background: var(--purple-bg); padding: 1px 6px; border-radius: 3px; }
   .param-required { font-size: 10px; font-weight: 600; color: var(--red); background: var(--red-bg); padding: 1px 5px; border-radius: 3px; }
-  .param-optional { font-size: 10px; color: var(--muted); background: rgba(125,133,144,0.12); padding: 1px 5px; border-radius: 3px; }
-  .param-desc { color: var(--muted); font-size: 12px; }
-  .param-enum { font-family: var(--mono); font-size: 11px; color: var(--orange); }
+  .param-optional { font-size: 10px; color: var(--muted); background: rgba(125,133,144,.12); padding: 1px 5px; border-radius: 3px; }
+  .param-desc     { color: var(--muted); font-size: 12px; }
+  .param-enum     { font-family: var(--mono); font-size: 11px; color: var(--orange); }
 
-  /* CODE BLOCKS */
   .code-block { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; margin: 8px 0; }
   .code-block-header { display: flex; justify-content: space-between; align-items: center; padding: 6px 14px; background: var(--surface); border-bottom: 1px solid var(--border); }
   .code-block-lang { font-size: 11px; color: var(--muted); font-family: var(--mono); }
-  .code-block-copy { font-size: 11px; color: var(--accent); cursor: pointer; background: none; border: none; padding: 2px 6px; border-radius: 3px; transition: background 0.15s; }
-  .code-block-copy:hover { background: rgba(88,166,255,0.1); }
+  .code-block-copy { font-size: 11px; color: var(--accent); cursor: pointer; background: none; border: none; padding: 2px 6px; border-radius: 3px; transition: background .15s; }
+  .code-block-copy:hover { background: rgba(88,166,255,.1); }
   pre { padding: 16px; font-family: var(--mono); font-size: 12px; line-height: 1.6; overflow-x: auto; color: var(--text); }
-  .kw  { color: #ff7b72; }
-  .str { color: #a5d6ff; }
-  .num { color: #79c0ff; }
-  .key { color: #d2a8ff; }
-  .cmt { color: #8b949e; font-style: italic; }
-  .bool{ color: #56d364; }
+  .kw  { color: #ff7b72; } .str { color: #a5d6ff; } .num { color: #79c0ff; }
+  .key { color: #d2a8ff; } .cmt { color: #8b949e; font-style: italic; } .bool { color: #56d364; }
 
-  /* RESPONSES */
   .response-item { margin-bottom: 12px; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
   .response-header { display: flex; align-items: center; gap: 10px; padding: 8px 14px; background: var(--surface); cursor: pointer; }
   .status-code { font-family: var(--mono); font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 4px; }
   .s-2xx { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
-  .s-4xx { background: var(--red-bg); color: var(--red); border: 1px solid #5c1a1a; }
-  .s-5xx { background: var(--orange-bg); color: var(--orange); border: 1px solid #5c3d00; }
+  .s-4xx { background: var(--red-bg);   color: var(--red);   border: 1px solid #5c1a1a; }
   .response-desc { font-size: 12px; color: var(--muted); }
   .response-body { display: none; }
   .response-body.open { display: block; }
 
   /* TRY IT */
   .try-section { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 20px; margin-top: 20px; }
-  .try-section h4 { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 16px; }
+  .try-section h4 { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 16px; }
+  .try-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
   .try-field { margin-bottom: 12px; }
   .try-field label { display: block; font-size: 11px; color: var(--muted); margin-bottom: 4px; font-family: var(--mono); }
   .try-field input, .try-field select, .try-field textarea {
     width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 5px;
     color: var(--text); font-size: 12px; font-family: var(--mono); padding: 7px 10px;
-    transition: border-color 0.15s; outline: none;
+    transition: border-color .15s; outline: none;
   }
   .try-field input:focus, .try-field select:focus, .try-field textarea:focus { border-color: var(--accent); }
   .try-field textarea { min-height: 200px; resize: vertical; }
   .try-field select option { background: var(--surface2); }
-  .btn-execute { background: var(--blue); color: #fff; border: none; border-radius: 5px; padding: 8px 20px; font-size: 13px; font-weight: 600; cursor: pointer; transition: opacity 0.15s; }
-  .btn-execute:hover { opacity: 0.85; }
+  .cfg-prefilled { border-color: var(--green) !important; }
+  .try-prefill-note { font-size: 10px; color: var(--green); margin-top: 3px; display: none; }
+  .try-prefill-note.visible { display: block; }
+  .btn-execute { background: var(--blue); color: #fff; border: none; border-radius: 5px; padding: 8px 20px; font-size: 13px; font-weight: 600; cursor: pointer; transition: opacity .15s; }
+  .btn-execute:hover { opacity: .85; }
   .btn-execute.post-btn { background: var(--green); }
-  .try-response { margin-top: 16px; }
-  .try-response-status { font-size: 11px; font-family: var(--mono); margin-bottom: 6px; }
+  .try-response-status { font-size: 11px; font-family: var(--mono); margin: 12px 0 6px; }
   .try-response-body { background: var(--bg); border: 1px solid var(--border); border-radius: 5px; padding: 12px; font-family: var(--mono); font-size: 11px; max-height: 360px; overflow-y: auto; white-space: pre; color: var(--text); display: none; }
 
-  /* TYPE BADGES */
   .type-grid { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0; }
   .type-badge { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 4px; font-family: var(--mono); border: 1px solid transparent; }
   .tb-info    { background: #0d3b6e; color: #79c0ff; border-color: #1158a8; }
@@ -149,42 +146,37 @@
   .tb-mudanca { background: #2e1065; color: #d2a8ff; border-color: #551bad; }
   .tb-evento  { background: #003a3d; color: #56d4d6; border-color: #006b70; }
 
-  /* AUTH SECTION */
   .auth-box { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 16px 20px; margin-bottom: 28px; display: flex; align-items: flex-start; gap: 14px; }
-  .auth-icon { font-size: 20px; margin-top: 2px; }
   .auth-box h4 { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
-  .auth-box p { font-size: 12px; color: var(--muted); line-height: 1.5; }
+  .auth-box p  { font-size: 12px; color: var(--muted); line-height: 1.5; }
   .auth-box code { font-family: var(--mono); background: var(--bg); border: 1px solid var(--border); padding: 1px 6px; border-radius: 3px; color: var(--cyan); font-size: 11px; }
 
-  /* DIVIDER */
   hr { border: none; border-top: 1px solid var(--border); margin: 32px 0; }
-
-  /* SCROLLBAR */
   ::-webkit-scrollbar { width: 6px; height: 6px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-
-  /* RESPONSIVE */
-  @media (max-width: 768px) {
-    .sidebar { display: none; }
-    .main { padding: 20px; }
-  }
+  @media (max-width: 768px) { .sidebar { display: none; } .main { padding: 20px; } .config-grid { grid-template-columns: 1fr; } .try-row { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
-
 <div class="layout">
 
   <!-- SIDEBAR -->
   <nav class="sidebar">
     <div class="sidebar-logo">
-      <h1>📋 Quadro de Avisos</h1>
-      <span class="version">v1.4.0</span>
+      <h1>Quadro de Avisos</h1>
+      <span class="version">v1.4.0 API</span>
+    </div>
+    <div class="sidebar-section">
+      <div class="cfg-status">
+        <span class="cfg-dot" id="cfg-dot"></span>
+        <span class="cfg-label" id="cfg-label">Sem configuracao</span>
+      </div>
     </div>
     <div class="sidebar-section">
       <div class="sidebar-section-title">Overview</div>
-      <a class="sidebar-item active" href="#intro">Introdução</a>
-      <a class="sidebar-item" href="#auth">Autenticação</a>
+      <a class="sidebar-item active" href="#config">Configuracao</a>
+      <a class="sidebar-item" href="#auth">Autenticacao</a>
       <a class="sidebar-item" href="#types">Tipos de Aviso</a>
     </div>
     <div class="sidebar-section">
@@ -209,45 +201,65 @@
   <!-- MAIN -->
   <main class="main">
 
+    <!-- CONFIG PANEL -->
+    <section id="config">
+      <div class="config-panel">
+        <div class="config-panel-header">
+          <h3>&#9881; Configuracao da API
+            <span class="config-saved-badge" id="saved-badge">&#10003; Salvo</span>
+          </h3>
+        </div>
+        <div class="config-grid">
+          <div class="config-field" style="grid-column: 1 / -1;">
+            <label>BASE URL DA API</label>
+            <input type="text" id="cfg-baseurl"
+              placeholder="https://api-gateway.suaempresa.com/zabbix/modules/quadro_avisos/api/">
+            <div class="try-prefill-note visible" id="cfg-url-note" style="display:none"></div>
+          </div>
+          <div class="config-field" style="grid-column: 1 / -1;">
+            <label>API KEY / BEARER TOKEN</label>
+            <input type="password" id="cfg-apikey"
+              placeholder="seu-token-secreto">
+          </div>
+        </div>
+        <div class="config-actions">
+          <button class="btn-save-cfg" onclick="saveConfig()">Salvar configuracao</button>
+          <button class="btn-clear-cfg" onclick="clearConfig()">Limpar</button>
+        </div>
+        <p class="config-hint">
+          A configuracao e salva no navegador (<code>localStorage</code>) e preenchida automaticamente
+          nos campos de todos os endpoints. Para ambientes com API Gateway ou MCP, informe a URL base
+          completa do gateway. O token e enviado como <code>Authorization: Bearer &lt;token&gt;</code>
+          e tambem como <code>X-Api-Token</code> em todas as requisicoes.
+        </p>
+      </div>
+    </section>
+
     <!-- INTRO -->
     <section id="intro">
       <div class="page-header">
-        <h2>Quadro de Avisos — REST API</h2>
-        <p>API para integração de fontes externas com o módulo de avisos do Zabbix. Permite consultar e publicar avisos a partir de ferramentas como Grafana, ServiceNow, scripts de monitoramento ou qualquer sistema HTTP.</p>
+        <h2>Quadro de Avisos &mdash; REST API</h2>
+        <p>API para integracao de fontes externas com o modulo de avisos do Zabbix. Permite consultar e publicar avisos a partir de ferramentas como Grafana, ServiceNow, scripts de monitoramento ou qualquer sistema HTTP.</p>
         <div class="header-badges">
           <span class="badge badge-blue">Zabbix 7.0 LTS</span>
           <span class="badge badge-green">REST / JSON</span>
           <span class="badge badge-orange">Bearer Token</span>
         </div>
       </div>
-
-      <div class="section-title">Base URL</div>
-      <div class="code-block">
-        <div class="code-block-header">
-          <span class="code-block-lang">URL</span>
-          <button class="code-block-copy" onclick="copyText('https://zabbix.suaempresa.com/zabbix/modules/quadro_avisos/api/', this)">Copiar</button>
-        </div>
-        <pre>https://zabbix.suaempresa.com/zabbix/modules/quadro_avisos/api/</pre>
-      </div>
-
-      <div class="section-title" style="margin-top:20px">Formato de Resposta</div>
-      <p style="color:var(--muted);font-size:13px;margin-bottom:8px">Todas as respostas são <code style="font-family:var(--mono);color:var(--cyan)">application/json; charset=utf-8</code>. Datas em ISO 8601 com timezone.</p>
     </section>
 
     <hr>
 
     <!-- AUTH -->
     <section id="auth">
-      <h3 style="font-size:18px;font-weight:600;margin-bottom:16px">Autenticação</h3>
+      <h3 style="font-size:18px;font-weight:600;margin-bottom:16px">Autenticacao</h3>
       <div class="auth-box">
-        <span class="auth-icon">🔑</span>
         <div>
           <h4>Bearer Token</h4>
-          <p>Configure tokens no arquivo <code>api/index.php</code> na variável <code>$API_TOKENS</code>. Envie o token via header HTTP em cada requisição:</p>
+          <p>Configure o token no painel acima. Ele sera enviado automaticamente em toda requisicao via dois headers simultaneos para maxima compatibilidade com gateways:</p>
           <div class="code-block" style="margin-top:10px">
-            <pre><span class="kw">Authorization:</span> <span class="str">Bearer seu-token-secreto</span>
-<span class="cmt"># Alternativa:</span>
-<span class="kw">X-Api-Token:</span> <span class="str">seu-token-secreto</span></pre>
+            <pre><span class="kw">Authorization:</span> <span class="str">Bearer &lt;token&gt;</span>
+<span class="kw">X-Api-Token:</span>    <span class="str">&lt;token&gt;</span></pre>
           </div>
         </div>
       </div>
@@ -258,7 +270,7 @@
     <!-- TIPOS -->
     <section id="types">
       <h3 style="font-size:18px;font-weight:600;margin-bottom:12px">Tipos de Aviso</h3>
-      <p style="color:var(--muted);font-size:13px;margin-bottom:16px">O campo <code style="font-family:var(--mono);color:var(--cyan)">tipo_borda</code> define a cor e a semântica do card exibido no dashboard do Zabbix.</p>
+      <p style="color:var(--muted);font-size:13px;margin-bottom:16px">O campo <code style="font-family:var(--mono);color:var(--cyan)">tipo_borda</code> define a cor e semantica do card no dashboard.</p>
       <div class="type-grid">
         <span class="type-badge tb-info">info</span>
         <span class="type-badge tb-success">success</span>
@@ -268,367 +280,194 @@
         <span class="type-badge tb-evento">evento</span>
       </div>
       <table class="params-table" style="margin-top:16px">
-        <thead>
-          <tr><th>Valor</th><th>Semântica</th><th>Cor</th></tr>
-        </thead>
+        <thead><tr><th>Valor</th><th>Semantica</th><th>Cor</th></tr></thead>
         <tbody>
-          <tr><td><span class="param-name">info</span></td><td class="param-desc">Avisos informativos gerais</td><td style="color:#79c0ff;font-size:12px">● Azul</td></tr>
-          <tr><td><span class="param-name">success</span></td><td class="param-desc">Incidente resolvido, conclusão</td><td style="color:#56d364;font-size:12px">● Verde</td></tr>
-          <tr><td><span class="param-name">warning</span></td><td class="param-desc">Atenção, degradação parcial</td><td style="color:#e3b341;font-size:12px">● Amarelo</td></tr>
-          <tr><td><span class="param-name">danger</span></td><td class="param-desc">Crítico, urgente, indisponibilidade</td><td style="color:#f85149;font-size:12px">● Vermelho</td></tr>
-          <tr><td><span class="param-name">mudanca</span></td><td class="param-desc">Requisição de mudança (RFC)</td><td style="color:#d2a8ff;font-size:12px">● Roxo</td></tr>
-          <tr><td><span class="param-name">evento</span></td><td class="param-desc">Evento programado, manutenção</td><td style="color:#56d4d6;font-size:12px">● Ciano</td></tr>
+          <tr><td><span class="param-name">info</span></td><td class="param-desc">Avisos informativos gerais</td><td style="color:#79c0ff;font-size:12px">&#9679; Azul</td></tr>
+          <tr><td><span class="param-name">success</span></td><td class="param-desc">Incidente resolvido, conclusao</td><td style="color:#56d364;font-size:12px">&#9679; Verde</td></tr>
+          <tr><td><span class="param-name">warning</span></td><td class="param-desc">Atencao, degradacao parcial</td><td style="color:#e3b341;font-size:12px">&#9679; Amarelo</td></tr>
+          <tr><td><span class="param-name">danger</span></td><td class="param-desc">Critico, urgente, indisponibilidade</td><td style="color:#f85149;font-size:12px">&#9679; Vermelho</td></tr>
+          <tr><td><span class="param-name">mudanca</span></td><td class="param-desc">Requisicao de mudanca (RFC)</td><td style="color:#d2a8ff;font-size:12px">&#9679; Roxo</td></tr>
+          <tr><td><span class="param-name">evento</span></td><td class="param-desc">Evento programado, manutencao</td><td style="color:#56d4d6;font-size:12px">&#9679; Ciano</td></tr>
         </tbody>
       </table>
     </section>
 
     <hr>
 
-    <!-- ENDPOINT: GET /avisos -->
+    <!-- GET /avisos -->
     <section id="ep-list">
       <div class="endpoint">
         <div class="endpoint-header" onclick="toggleEndpoint('ep1')">
           <span class="endpoint-method m-get">GET</span>
           <span class="endpoint-path">/api/avisos</span>
-          <span class="endpoint-desc">Lista avisos com filtros e paginação</span>
-          <span class="expand-icon" id="ep1-icon">▼</span>
+          <span class="endpoint-desc">Lista avisos com filtros e paginacao</span>
+          <span class="expand-icon" id="ep1-icon">&#9660;</span>
         </div>
         <div class="endpoint-body open" id="ep1">
-
           <div class="section-title">Query Parameters</div>
           <table class="params-table">
-            <thead><tr><th>Parâmetro</th><th>Tipo</th><th>Obrig.</th><th>Descrição</th></tr></thead>
+            <thead><tr><th>Parametro</th><th>Tipo</th><th>Obrig.</th><th>Descricao</th></tr></thead>
             <tbody>
-              <tr>
-                <td><span class="param-name">tipo_borda</span></td>
-                <td><span class="param-type">string</span></td>
-                <td><span class="param-optional">opcional</span></td>
-                <td class="param-desc">Filtra por tipo. <span class="param-enum">info | success | warning | danger | mudanca | evento</span></td>
-              </tr>
-              <tr>
-                <td><span class="param-name">status</span></td>
-                <td><span class="param-type">string</span></td>
-                <td><span class="param-optional">opcional</span></td>
-                <td class="param-desc">Filtra por status temporal. <span class="param-enum">active | scheduled | expired</span></td>
-              </tr>
-              <tr>
-                <td><span class="param-name">usrgrpid</span></td>
-                <td><span class="param-type">integer</span></td>
-                <td><span class="param-optional">opcional</span></td>
-                <td class="param-desc">Retorna avisos visíveis para o grupo (inclui <code style="font-family:var(--mono);color:var(--cyan)">para_todos</code>)</td>
-              </tr>
-              <tr>
-                <td><span class="param-name">para_todos</span></td>
-                <td><span class="param-type">boolean</span></td>
-                <td><span class="param-optional">opcional</span></td>
-                <td class="param-desc">Se <code style="font-family:var(--mono);color:var(--cyan)">true</code>, retorna apenas avisos visíveis para todos os grupos</td>
-              </tr>
-              <tr>
-                <td><span class="param-name">limit</span></td>
-                <td><span class="param-type">integer</span></td>
-                <td><span class="param-optional">opcional</span></td>
-                <td class="param-desc">Máximo de registros por página. Padrão: <code style="font-family:var(--mono);color:var(--cyan)">50</code>, Máx: <code style="font-family:var(--mono);color:var(--cyan)">200</code></td>
-              </tr>
-              <tr>
-                <td><span class="param-name">offset</span></td>
-                <td><span class="param-type">integer</span></td>
-                <td><span class="param-optional">opcional</span></td>
-                <td class="param-desc">Deslocamento para paginação. Padrão: <code style="font-family:var(--mono);color:var(--cyan)">0</code></td>
-              </tr>
-              <tr>
-                <td><span class="param-name">order</span></td>
-                <td><span class="param-type">string</span></td>
-                <td><span class="param-optional">opcional</span></td>
-                <td class="param-desc">Ordenação. <span class="param-enum">criado_em_desc | criado_em_asc | inicio_asc | fim_asc</span>. Padrão: <code style="font-family:var(--mono);color:var(--cyan)">criado_em_desc</code></td>
-              </tr>
+              <tr><td><span class="param-name">tipo_borda</span></td><td><span class="param-type">string</span></td><td><span class="param-optional">opcional</span></td><td class="param-desc">Filtra por tipo. <span class="param-enum">info|success|warning|danger|mudanca|evento</span></td></tr>
+              <tr><td><span class="param-name">status</span></td><td><span class="param-type">string</span></td><td><span class="param-optional">opcional</span></td><td class="param-desc"><span class="param-enum">active|scheduled|expired</span></td></tr>
+              <tr><td><span class="param-name">usrgrpid</span></td><td><span class="param-type">integer</span></td><td><span class="param-optional">opcional</span></td><td class="param-desc">Avisos visiveis para o grupo (inclui para_todos)</td></tr>
+              <tr><td><span class="param-name">limit</span></td><td><span class="param-type">integer</span></td><td><span class="param-optional">opcional</span></td><td class="param-desc">Max registros. Padrao: 50, Max: 200</td></tr>
+              <tr><td><span class="param-name">offset</span></td><td><span class="param-type">integer</span></td><td><span class="param-optional">opcional</span></td><td class="param-desc">Deslocamento para paginacao. Padrao: 0</td></tr>
+              <tr><td><span class="param-name">order</span></td><td><span class="param-type">string</span></td><td><span class="param-optional">opcional</span></td><td class="param-desc"><span class="param-enum">criado_em_desc|criado_em_asc|inicio_asc|fim_asc</span></td></tr>
             </tbody>
           </table>
 
-          <div class="section-title">Exemplo de Requisição</div>
+          <div class="section-title">Exemplo</div>
           <div class="code-block">
-            <div class="code-block-header">
-              <span class="code-block-lang">curl</span>
-              <button class="code-block-copy" onclick="copyEl('curl-get-list', this)">Copiar</button>
-            </div>
-            <pre id="curl-get-list"><span class="kw">curl</span> -X GET \
-  <span class="str">"https://zabbix.suaempresa.com/zabbix/modules/quadro_avisos/api/?tipo_borda=danger&status=active&limit=10"</span> \
-  -H <span class="str">"Authorization: Bearer seu-token-secreto"</span> \
-  -H <span class="str">"Accept: application/json"</span></pre>
+            <div class="code-block-header"><span class="code-block-lang">curl</span><button class="code-block-copy" onclick="copyEl('curl1',this)">Copiar</button></div>
+            <pre id="curl1"><span class="kw">curl</span> -X GET \
+  <span class="str" id="curl1-url">"https://api-gw/api/?tipo_borda=danger&amp;status=active"</span> \
+  -H <span class="str" id="curl1-auth">"Authorization: Bearer &lt;token&gt;"</span> \
+  -H <span class="str">"X-Api-Token: &lt;token&gt;"</span></pre>
           </div>
 
           <div class="section-title">Respostas</div>
           <div class="response-item">
-            <div class="response-header" onclick="toggleResponse('r1-200')">
-              <span class="status-code s-2xx">200</span>
-              <span class="response-desc">Lista retornada com sucesso</span>
-              <span class="expand-icon">▼</span>
-            </div>
-            <div class="response-body open" id="r1-200">
-              <div class="code-block">
-                <div class="code-block-header"><span class="code-block-lang">json</span></div>
-                <pre>{
+            <div class="response-header" onclick="toggleResponse('r1-200')"><span class="status-code s-2xx">200</span><span class="response-desc">Lista retornada com sucesso</span><span class="expand-icon">&#9660;</span></div>
+            <div class="response-body open" id="r1-200"><div class="code-block"><pre>{
   <span class="key">"success"</span>: <span class="bool">true</span>,
-  <span class="key">"timestamp"</span>: <span class="str">"2025-06-07T10:30:00-03:00"</span>,
-  <span class="key">"data"</span>: [
-    {
-      <span class="key">"id"</span>: <span class="num">42</span>,
-      <span class="key">"titulo"</span>: <span class="str">"Manutenção BD produção"</span>,
-      <span class="key">"conteudo"</span>: <span class="str">"## Impacto\nIndisponibilidade de 15 min."</span>,
-      <span class="key">"tipo_borda"</span>: <span class="str">"danger"</span>,
-      <span class="key">"status"</span>: <span class="str">"active"</span>,
-      <span class="key">"usrgrpid"</span>: <span class="num">7</span>,
-      <span class="key">"grupo_nome"</span>: <span class="str">"Infra"</span>,
-      <span class="key">"para_todos"</span>: <span class="bool">false</span>,
-      <span class="key">"criado_por"</span>: { <span class="key">"username"</span>: <span class="str">"admin"</span> },
-      <span class="key">"inicio"</span>: <span class="str">"2025-06-07T02:00:00-03:00"</span>,
-      <span class="key">"fim"</span>: <span class="str">"2025-06-07T03:00:00-03:00"</span>,
-      <span class="key">"criado_em"</span>: <span class="str">"2025-06-06T15:22:10-03:00"</span>,
-      <span class="key">"atualizado_em"</span>: <span class="str">"2025-06-06T15:22:10-03:00"</span>
-    }
-  ],
-  <span class="key">"pagination"</span>: {
-    <span class="key">"total"</span>: <span class="num">1</span>,
-    <span class="key">"limit"</span>: <span class="num">10</span>,
-    <span class="key">"offset"</span>: <span class="num">0</span>,
-    <span class="key">"pages"</span>: <span class="num">1</span>
-  },
-  <span class="key">"filters_applied"</span>: {
-    <span class="key">"tipo_borda"</span>: <span class="str">"danger"</span>,
-    <span class="key">"status"</span>: <span class="str">"active"</span>
-  }
-}</pre>
-              </div>
-            </div>
+  <span class="key">"data"</span>: [ { <span class="key">"id"</span>: <span class="num">42</span>, <span class="key">"titulo"</span>: <span class="str">"Manutencao"</span>, <span class="key">"tipo_borda"</span>: <span class="str">"danger"</span>, <span class="key">"status"</span>: <span class="str">"active"</span>, <span class="cmt">/* ... */</span> } ],
+  <span class="key">"pagination"</span>: { <span class="key">"total"</span>: <span class="num">1</span>, <span class="key">"limit"</span>: <span class="num">50</span>, <span class="key">"offset"</span>: <span class="num">0</span>, <span class="key">"pages"</span>: <span class="num">1</span> }
+}</pre></div></div>
           </div>
           <div class="response-item">
-            <div class="response-header" onclick="toggleResponse('r1-401')">
-              <span class="status-code s-4xx">401</span>
-              <span class="response-desc">Token inválido ou ausente</span>
-              <span class="expand-icon">▶</span>
-            </div>
-            <div class="response-body" id="r1-401">
-              <div class="code-block"><pre>{ <span class="key">"success"</span>: <span class="bool">false</span>, <span class="key">"error"</span>: { <span class="key">"code"</span>: <span class="str">"UNAUTHORIZED"</span>, <span class="key">"message"</span>: <span class="str">"Invalid or missing API token."</span> } }</pre></div>
-            </div>
+            <div class="response-header" onclick="toggleResponse('r1-401')"><span class="status-code s-4xx">401</span><span class="response-desc">Token invalido</span><span class="expand-icon">&#9654;</span></div>
+            <div class="response-body" id="r1-401"><div class="code-block"><pre>{ <span class="key">"success"</span>: <span class="bool">false</span>, <span class="key">"error"</span>: { <span class="key">"code"</span>: <span class="str">"UNAUTHORIZED"</span>, <span class="key">"message"</span>: <span class="str">"Invalid or missing API token."</span> } }</pre></div></div>
           </div>
 
-          <!-- TRY IT -->
           <div class="try-section">
-            <h4>⚡ Try it out</h4>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-              <div class="try-field">
-                <label>Authorization Token</label>
-                <input type="text" id="t1-token" placeholder="Bearer seu-token-secreto">
-              </div>
+            <h4>&#9889; Try it out</h4>
+            <div class="try-row">
               <div class="try-field">
                 <label>tipo_borda</label>
-                <select id="t1-tipo">
-                  <option value="">— todos —</option>
-                  <option value="info">info</option>
-                  <option value="success">success</option>
-                  <option value="warning">warning</option>
-                  <option value="danger">danger</option>
-                  <option value="mudanca">mudanca</option>
-                  <option value="evento">evento</option>
-                </select>
+                <select id="t1-tipo"><option value="">-- todos --</option><option>info</option><option>success</option><option>warning</option><option>danger</option><option>mudanca</option><option>evento</option></select>
               </div>
               <div class="try-field">
                 <label>status</label>
-                <select id="t1-status">
-                  <option value="">— todos —</option>
-                  <option value="active">active</option>
-                  <option value="scheduled">scheduled</option>
-                  <option value="expired">expired</option>
-                </select>
+                <select id="t1-status"><option value="">-- todos --</option><option>active</option><option>scheduled</option><option>expired</option></select>
               </div>
               <div class="try-field">
                 <label>limit</label>
                 <input type="number" id="t1-limit" value="10" min="1" max="200">
               </div>
+              <div class="try-field">
+                <label>offset</label>
+                <input type="number" id="t1-offset" value="0" min="0">
+              </div>
             </div>
-            <div class="try-field" style="margin-top:4px">
-              <label>Base URL</label>
-              <input type="text" id="t1-url" value="/modules/quadro_avisos/api/" placeholder="https://zabbix.suaempresa.com/zabbix/modules/quadro_avisos/api/">
+            <div class="try-field">
+              <label>BASE URL <span style="color:var(--green);font-size:10px" id="t1-cfg-note"></span></label>
+              <input type="text" id="t1-url" placeholder="https://api-gateway.suaempresa.com/...api/">
             </div>
-            <button class="btn-execute" onclick="executeGet()">▶ Executar</button>
-            <div class="try-response" id="t1-resp">
-              <div class="try-response-status" id="t1-status-out"></div>
-              <pre class="try-response-body" id="t1-body"></pre>
+            <div class="try-field">
+              <label>API KEY <span style="color:var(--green);font-size:10px" id="t1-key-note"></span></label>
+              <input type="password" id="t1-key" placeholder="token">
             </div>
+            <button class="btn-execute" onclick="executeGet()">&#9654; Executar</button>
+            <div class="try-response-status" id="t1-status-out"></div>
+            <pre class="try-response-body" id="t1-body"></pre>
           </div>
-
         </div>
       </div>
     </section>
 
-    <!-- ENDPOINT: GET /avisos/{id} -->
+    <!-- GET /avisos/{id} -->
     <section id="ep-getid">
       <div class="endpoint">
         <div class="endpoint-header" onclick="toggleEndpoint('ep2')">
           <span class="endpoint-method m-get">GET</span>
           <span class="endpoint-path">/api/avisos/{id}</span>
           <span class="endpoint-desc">Busca aviso por ID</span>
-          <span class="expand-icon" id="ep2-icon">▼</span>
+          <span class="expand-icon" id="ep2-icon">&#9660;</span>
         </div>
         <div class="endpoint-body open" id="ep2">
-
           <div class="section-title">Path Parameters</div>
           <table class="params-table">
-            <thead><tr><th>Parâmetro</th><th>Tipo</th><th>Obrig.</th><th>Descrição</th></tr></thead>
-            <tbody>
-              <tr>
-                <td><span class="param-name">id</span></td>
-                <td><span class="param-type">integer</span></td>
-                <td><span class="param-required">obrigatório</span></td>
-                <td class="param-desc">ID único do aviso</td>
-              </tr>
-            </tbody>
+            <thead><tr><th>Parametro</th><th>Tipo</th><th>Obrig.</th><th>Descricao</th></tr></thead>
+            <tbody><tr><td><span class="param-name">id</span></td><td><span class="param-type">integer</span></td><td><span class="param-required">obrigatorio</span></td><td class="param-desc">ID unico do aviso</td></tr></tbody>
           </table>
 
-          <div class="section-title">Exemplo de Requisição</div>
+          <div class="section-title">Exemplo</div>
           <div class="code-block">
-            <div class="code-block-header">
-              <span class="code-block-lang">curl</span>
-              <button class="code-block-copy" onclick="copyEl('curl-get-id', this)">Copiar</button>
-            </div>
-            <pre id="curl-get-id"><span class="kw">curl</span> -X GET \
-  <span class="str">"https://zabbix.suaempresa.com/zabbix/modules/quadro_avisos/api/42"</span> \
-  -H <span class="str">"Authorization: Bearer seu-token-secreto"</span></pre>
+            <div class="code-block-header"><span class="code-block-lang">curl</span><button class="code-block-copy" onclick="copyEl('curl2',this)">Copiar</button></div>
+            <pre id="curl2"><span class="kw">curl</span> -X GET <span class="str" id="curl2-url">"https://api-gw/api/42"</span> \
+  -H <span class="str" id="curl2-auth">"Authorization: Bearer &lt;token&gt;"</span></pre>
           </div>
 
           <div class="section-title">Respostas</div>
           <div class="response-item">
-            <div class="response-header" onclick="toggleResponse('r2-200')">
-              <span class="status-code s-2xx">200</span>
-              <span class="response-desc">Aviso encontrado</span>
-              <span class="expand-icon">▼</span>
-            </div>
-            <div class="response-body open" id="r2-200">
-              <div class="code-block"><pre>{ <span class="key">"success"</span>: <span class="bool">true</span>, <span class="key">"data"</span>: { <span class="key">"id"</span>: <span class="num">42</span>, <span class="cmt">/* ... campos do aviso ... */</span> } }</pre></div>
-            </div>
+            <div class="response-header" onclick="toggleResponse('r2-200')"><span class="status-code s-2xx">200</span><span class="response-desc">Aviso encontrado</span><span class="expand-icon">&#9660;</span></div>
+            <div class="response-body open" id="r2-200"><div class="code-block"><pre>{ <span class="key">"success"</span>: <span class="bool">true</span>, <span class="key">"data"</span>: { <span class="key">"id"</span>: <span class="num">42</span>, <span class="cmt">/* campos do aviso */</span> } }</pre></div></div>
           </div>
           <div class="response-item">
-            <div class="response-header" onclick="toggleResponse('r2-404')">
-              <span class="status-code s-4xx">404</span>
-              <span class="response-desc">Aviso não encontrado</span>
-              <span class="expand-icon">▶</span>
-            </div>
-            <div class="response-body" id="r2-404">
-              <div class="code-block"><pre>{ <span class="key">"success"</span>: <span class="bool">false</span>, <span class="key">"error"</span>: { <span class="key">"code"</span>: <span class="str">"NOT_FOUND"</span>, <span class="key">"message"</span>: <span class="str">"Notice with id=42 not found."</span> } }</pre></div>
-            </div>
+            <div class="response-header" onclick="toggleResponse('r2-404')"><span class="status-code s-4xx">404</span><span class="response-desc">Nao encontrado</span><span class="expand-icon">&#9654;</span></div>
+            <div class="response-body" id="r2-404"><div class="code-block"><pre>{ <span class="key">"success"</span>: <span class="bool">false</span>, <span class="key">"error"</span>: { <span class="key">"code"</span>: <span class="str">"NOT_FOUND"</span>, <span class="key">"message"</span>: <span class="str">"Notice with id=42 not found."</span> } }</pre></div></div>
           </div>
 
           <div class="try-section">
-            <h4>⚡ Try it out</h4>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-              <div class="try-field">
-                <label>Authorization Token</label>
-                <input type="text" id="t2-token" placeholder="Bearer seu-token-secreto">
-              </div>
+            <h4>&#9889; Try it out</h4>
+            <div class="try-row">
               <div class="try-field">
                 <label>ID do Aviso</label>
                 <input type="number" id="t2-id" value="1" min="1">
               </div>
+              <div class="try-field">
+                <label>BASE URL <span style="color:var(--green);font-size:10px" id="t2-cfg-note"></span></label>
+                <input type="text" id="t2-url" placeholder="https://api-gateway.suaempresa.com/...api/">
+              </div>
             </div>
             <div class="try-field">
-              <label>Base URL</label>
-              <input type="text" id="t2-url" value="/modules/quadro_avisos/api/" placeholder="https://zabbix.suaempresa.com/zabbix/modules/quadro_avisos/api/">
+              <label>API KEY <span style="color:var(--green);font-size:10px" id="t2-key-note"></span></label>
+              <input type="password" id="t2-key" placeholder="token">
             </div>
-            <button class="btn-execute" onclick="executeGetById()">▶ Executar</button>
-            <div class="try-response">
-              <div class="try-response-status" id="t2-status-out"></div>
-              <pre class="try-response-body" id="t2-body"></pre>
-            </div>
+            <button class="btn-execute" onclick="executeGetById()">&#9654; Executar</button>
+            <div class="try-response-status" id="t2-status-out"></div>
+            <pre class="try-response-body" id="t2-body"></pre>
           </div>
-
         </div>
       </div>
     </section>
 
-    <!-- ENDPOINT: POST /avisos -->
+    <!-- POST /avisos -->
     <section id="ep-create">
       <div class="endpoint">
         <div class="endpoint-header" onclick="toggleEndpoint('ep3')">
           <span class="endpoint-method m-post">POST</span>
           <span class="endpoint-path">/api/avisos</span>
           <span class="endpoint-desc">Cria um novo aviso</span>
-          <span class="expand-icon" id="ep3-icon">▼</span>
+          <span class="expand-icon" id="ep3-icon">&#9660;</span>
         </div>
         <div class="endpoint-body open" id="ep3">
-
-          <div class="section-title">Request Body — application/json</div>
+          <div class="section-title">Request Body &mdash; application/json</div>
           <table class="params-table">
-            <thead><tr><th>Campo</th><th>Tipo</th><th>Obrig.</th><th>Descrição</th></tr></thead>
+            <thead><tr><th>Campo</th><th>Tipo</th><th>Obrig.</th><th>Descricao</th></tr></thead>
             <tbody>
-              <tr>
-                <td><span class="param-name">titulo</span></td>
-                <td><span class="param-type">string</span></td>
-                <td><span class="param-required">obrigatório</span></td>
-                <td class="param-desc">Título do aviso. Máx 255 caracteres.</td>
-              </tr>
-              <tr>
-                <td><span class="param-name">conteudo</span></td>
-                <td><span class="param-type">string</span></td>
-                <td><span class="param-required">obrigatório</span></td>
-                <td class="param-desc">Corpo do aviso em Markdown ou HTML.</td>
-              </tr>
-              <tr>
-                <td><span class="param-name">tipo_borda</span></td>
-                <td><span class="param-type">string</span></td>
-                <td><span class="param-required">obrigatório</span></td>
-                <td class="param-desc">Tipo/cor do card. <span class="param-enum">info | success | warning | danger | mudanca | evento</span></td>
-              </tr>
-              <tr>
-                <td><span class="param-name">criado_por</span></td>
-                <td><span class="param-type">integer</span></td>
-                <td><span class="param-required">obrigatório</span></td>
-                <td class="param-desc">userid do Zabbix responsável pelo aviso.</td>
-              </tr>
-              <tr>
-                <td><span class="param-name">inicio</span></td>
-                <td><span class="param-type">string</span></td>
-                <td><span class="param-required">obrigatório</span></td>
-                <td class="param-desc">Início da exibição. ISO 8601: <code style="font-family:var(--mono);color:var(--cyan)">2025-06-01T08:00:00</code></td>
-              </tr>
-              <tr>
-                <td><span class="param-name">fim</span></td>
-                <td><span class="param-type">string</span></td>
-                <td><span class="param-required">obrigatório</span></td>
-                <td class="param-desc">Fim da exibição. ISO 8601. Deve ser posterior a <code style="font-family:var(--mono);color:var(--cyan)">inicio</code>.</td>
-              </tr>
-              <tr>
-                <td><span class="param-name">usrgrpid</span></td>
-                <td><span class="param-type">integer</span></td>
-                <td><span class="param-required">condicional</span></td>
-                <td class="param-desc">ID do grupo destinatário. Obrigatório se <code style="font-family:var(--mono);color:var(--cyan)">para_todos</code> for <code style="font-family:var(--mono);color:var(--cyan)">false</code>.</td>
-              </tr>
-              <tr>
-                <td><span class="param-name">para_todos</span></td>
-                <td><span class="param-type">boolean</span></td>
-                <td><span class="param-optional">opcional</span></td>
-                <td class="param-desc">Se <code style="font-family:var(--mono);color:var(--cyan)">true</code>, o aviso é visível para todos os grupos. Padrão: <code style="font-family:var(--mono);color:var(--cyan)">false</code>.</td>
-              </tr>
-              <tr>
-                <td><span class="param-name">source</span></td>
-                <td><span class="param-type">string</span></td>
-                <td><span class="param-optional">opcional</span></td>
-                <td class="param-desc">Identificador da fonte remota. Ex: <span class="param-enum">"grafana"</span>, <span class="param-enum">"servicenow"</span>, <span class="param-enum">"pagerduty"</span>. Máx 64 chars.</td>
-              </tr>
+              <tr><td><span class="param-name">titulo</span></td><td><span class="param-type">string</span></td><td><span class="param-required">obrigatorio</span></td><td class="param-desc">Titulo. Max 255 chars.</td></tr>
+              <tr><td><span class="param-name">conteudo</span></td><td><span class="param-type">string</span></td><td><span class="param-required">obrigatorio</span></td><td class="param-desc">Corpo em Markdown ou HTML.</td></tr>
+              <tr><td><span class="param-name">tipo_borda</span></td><td><span class="param-type">string</span></td><td><span class="param-required">obrigatorio</span></td><td class="param-desc"><span class="param-enum">info|success|warning|danger|mudanca|evento</span></td></tr>
+              <tr><td><span class="param-name">criado_por</span></td><td><span class="param-type">integer</span></td><td><span class="param-required">obrigatorio</span></td><td class="param-desc">userid do Zabbix responsavel.</td></tr>
+              <tr><td><span class="param-name">inicio</span></td><td><span class="param-type">string</span></td><td><span class="param-required">obrigatorio</span></td><td class="param-desc">ISO 8601: <code style="font-family:var(--mono);color:var(--cyan)">2025-06-01T08:00:00</code></td></tr>
+              <tr><td><span class="param-name">fim</span></td><td><span class="param-type">string</span></td><td><span class="param-required">obrigatorio</span></td><td class="param-desc">ISO 8601. Deve ser posterior a inicio.</td></tr>
+              <tr><td><span class="param-name">usrgrpid</span></td><td><span class="param-type">integer</span></td><td><span class="param-required">condicional</span></td><td class="param-desc">ID do grupo. Obrigatorio se para_todos=false.</td></tr>
+              <tr><td><span class="param-name">para_todos</span></td><td><span class="param-type">boolean</span></td><td><span class="param-optional">opcional</span></td><td class="param-desc">Visivel para todos os grupos. Padrao: false.</td></tr>
+              <tr><td><span class="param-name">source</span></td><td><span class="param-type">string</span></td><td><span class="param-optional">opcional</span></td><td class="param-desc">Identificador da fonte. Ex: <span class="param-enum">"grafana"</span>, <span class="param-enum">"servicenow"</span>. Max 64 chars.</td></tr>
             </tbody>
           </table>
 
-          <div class="section-title">Exemplo de Requisição</div>
+          <div class="section-title">Exemplo</div>
           <div class="code-block">
-            <div class="code-block-header">
-              <span class="code-block-lang">curl</span>
-              <button class="code-block-copy" onclick="copyEl('curl-post', this)">Copiar</button>
-            </div>
-            <pre id="curl-post"><span class="kw">curl</span> -X POST \
-  <span class="str">"https://zabbix.suaempresa.com/zabbix/modules/quadro_avisos/api/"</span> \
-  -H <span class="str">"Authorization: Bearer seu-token-secreto"</span> \
+            <div class="code-block-header"><span class="code-block-lang">curl</span><button class="code-block-copy" onclick="copyEl('curl3',this)">Copiar</button></div>
+            <pre id="curl3"><span class="kw">curl</span> -X POST <span class="str" id="curl3-url">"https://api-gw/api/"</span> \
+  -H <span class="str" id="curl3-auth">"Authorization: Bearer &lt;token&gt;"</span> \
   -H <span class="str">"Content-Type: application/json"</span> \
   -d <span class="str">'{
-    "titulo": "Janela de manutenção — Banco de Dados",
-    "conteudo": "## Impacto\nIndisponibilidade prevista de **15 minutos**.\n\n- Ambiente: Produção\n- Sistema: PostgreSQL\n- Responsável: DBA Team",
+    "titulo": "Manutencao BD producao",
+    "conteudo": "## Impacto\nIndisponibilidade de **15 min**.",
     "tipo_borda": "evento",
     "criado_por": 1,
     "usrgrpid": 7,
@@ -641,72 +480,35 @@
 
           <div class="section-title">Respostas</div>
           <div class="response-item">
-            <div class="response-header" onclick="toggleResponse('r3-201')">
-              <span class="status-code s-2xx">201</span>
-              <span class="response-desc">Aviso criado com sucesso</span>
-              <span class="expand-icon">▼</span>
-            </div>
-            <div class="response-body open" id="r3-201">
-              <div class="code-block"><pre>{
-  <span class="key">"success"</span>: <span class="bool">true</span>,
-  <span class="key">"timestamp"</span>: <span class="str">"2025-06-07T10:30:00-03:00"</span>,
-  <span class="key">"data"</span>: {
-    <span class="key">"id"</span>: <span class="num">43</span>,
-    <span class="key">"titulo"</span>: <span class="str">"Janela de manutenção — Banco de Dados"</span>,
-    <span class="key">"conteudo"</span>: <span class="str">"## Impacto\n..."</span>,
-    <span class="key">"tipo_borda"</span>: <span class="str">"evento"</span>,
-    <span class="key">"status"</span>: <span class="str">"scheduled"</span>,
-    <span class="key">"usrgrpid"</span>: <span class="num">7</span>,
-    <span class="key">"grupo_nome"</span>: <span class="str">"Infra"</span>,
-    <span class="key">"para_todos"</span>: <span class="bool">false</span>,
-    <span class="key">"criado_por"</span>: { <span class="key">"username"</span>: <span class="str">"admin"</span> },
-    <span class="key">"inicio"</span>: <span class="str">"2025-06-10T02:00:00-03:00"</span>,
-    <span class="key">"fim"</span>: <span class="str">"2025-06-10T03:00:00-03:00"</span>,
-    <span class="key">"criado_em"</span>: <span class="str">"2025-06-07T10:30:00-03:00"</span>,
-    <span class="key">"atualizado_em"</span>: <span class="str">"2025-06-07T10:30:00-03:00"</span>
-  }
-}</pre></div>
-            </div>
+            <div class="response-header" onclick="toggleResponse('r3-201')"><span class="status-code s-2xx">201</span><span class="response-desc">Aviso criado com sucesso</span><span class="expand-icon">&#9660;</span></div>
+            <div class="response-body open" id="r3-201"><div class="code-block"><pre>{ <span class="key">"success"</span>: <span class="bool">true</span>, <span class="key">"data"</span>: { <span class="key">"id"</span>: <span class="num">43</span>, <span class="key">"status"</span>: <span class="str">"scheduled"</span>, <span class="cmt">/* ... */</span> } }</pre></div></div>
           </div>
           <div class="response-item">
-            <div class="response-header" onclick="toggleResponse('r3-422')">
-              <span class="status-code s-4xx">422</span>
-              <span class="response-desc">Erro de validação</span>
-              <span class="expand-icon">▶</span>
-            </div>
-            <div class="response-body" id="r3-422">
-              <div class="code-block"><pre>{
+            <div class="response-header" onclick="toggleResponse('r3-422')"><span class="status-code s-4xx">422</span><span class="response-desc">Erro de validacao</span><span class="expand-icon">&#9654;</span></div>
+            <div class="response-body" id="r3-422"><div class="code-block"><pre>{
   <span class="key">"success"</span>: <span class="bool">false</span>,
-  <span class="key">"error"</span>: {
-    <span class="key">"code"</span>: <span class="str">"VALIDATION_ERROR"</span>,
-    <span class="key">"message"</span>: <span class="str">"Request validation failed."</span>
-  },
-  <span class="key">"errors"</span>: [
-    { <span class="key">"field"</span>: <span class="str">"titulo"</span>, <span class="key">"message"</span>: <span class="str">"Required field."</span> },
-    { <span class="key">"field"</span>: <span class="str">"fim"</span>, <span class="key">"message"</span>: <span class="str">"fim must be after inicio."</span> }
-  ]
-}</pre></div>
-            </div>
+  <span class="key">"error"</span>: { <span class="key">"code"</span>: <span class="str">"VALIDATION_ERROR"</span>, <span class="key">"message"</span>: <span class="str">"Request validation failed."</span> },
+  <span class="key">"errors"</span>: [ { <span class="key">"field"</span>: <span class="str">"titulo"</span>, <span class="key">"message"</span>: <span class="str">"Required field."</span> } ]
+}</pre></div></div>
           </div>
 
-          <!-- TRY IT POST -->
           <div class="try-section">
-            <h4>⚡ Try it out</h4>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <h4>&#9889; Try it out</h4>
+            <div class="try-row">
               <div class="try-field">
-                <label>Authorization Token</label>
-                <input type="text" id="t3-token" placeholder="Bearer seu-token-secreto">
+                <label>BASE URL <span style="color:var(--green);font-size:10px" id="t3-cfg-note"></span></label>
+                <input type="text" id="t3-url" placeholder="https://api-gateway.suaempresa.com/...api/">
               </div>
               <div class="try-field">
-                <label>Base URL</label>
-                <input type="text" id="t3-url" value="/modules/quadro_avisos/api/" placeholder="https://zabbix.suaempresa.com/...">
+                <label>API KEY <span style="color:var(--green);font-size:10px" id="t3-key-note"></span></label>
+                <input type="password" id="t3-key" placeholder="token">
               </div>
             </div>
             <div class="try-field">
               <label>Request Body (JSON)</label>
               <textarea id="t3-body">{
   "titulo": "Teste via API",
-  "conteudo": "## Aviso de teste\nCriado via **API REST** do Quadro de Avisos.",
+  "conteudo": "## Aviso de teste\nCriado via **API REST**.",
   "tipo_borda": "info",
   "criado_por": 1,
   "usrgrpid": 7,
@@ -716,13 +518,10 @@
   "source": "api-docs"
 }</textarea>
             </div>
-            <button class="btn-execute post-btn" onclick="executePost()">▶ Executar</button>
-            <div class="try-response">
-              <div class="try-response-status" id="t3-status-out"></div>
-              <pre class="try-response-body" id="t3-body-out"></pre>
-            </div>
+            <button class="btn-execute post-btn" onclick="executePost()">&#9654; Executar</button>
+            <div class="try-response-status" id="t3-status-out"></div>
+            <pre class="try-response-body" id="t3-body-out"></pre>
           </div>
-
         </div>
       </div>
     </section>
@@ -731,18 +530,17 @@
 
     <!-- SCHEMAS -->
     <section id="schema-aviso">
-      <h3 style="font-size:18px;font-weight:600;margin-bottom:16px">Schema — Aviso</h3>
-      <div class="code-block">
-        <div class="code-block-header"><span class="code-block-lang">json schema</span></div>
+      <h3 style="font-size:18px;font-weight:600;margin-bottom:16px">Schema &mdash; Aviso</h3>
+      <div class="code-block"><div class="code-block-header"><span class="code-block-lang">json schema</span></div>
         <pre>{
-  <span class="key">"id"</span>:            <span class="str">integer</span>          <span class="cmt">// ID único</span>
-  <span class="key">"titulo"</span>:        <span class="str">string</span>           <span class="cmt">// Título do aviso</span>
+  <span class="key">"id"</span>:            <span class="str">integer</span>
+  <span class="key">"titulo"</span>:        <span class="str">string</span>
   <span class="key">"conteudo"</span>:      <span class="str">string</span>           <span class="cmt">// Markdown ou HTML</span>
   <span class="key">"tipo_borda"</span>:    <span class="str">string</span>           <span class="cmt">// info|success|warning|danger|mudanca|evento</span>
   <span class="key">"status"</span>:        <span class="str">string</span>           <span class="cmt">// active|scheduled|expired (calculado)</span>
-  <span class="key">"usrgrpid"</span>:      <span class="str">integer|null</span>     <span class="cmt">// ID do grupo destinatário</span>
-  <span class="key">"grupo_nome"</span>:    <span class="str">string|null</span>      <span class="cmt">// Nome do grupo (ou "All groups")</span>
-  <span class="key">"para_todos"</span>:    <span class="str">boolean</span>          <span class="cmt">// Visível para todos os grupos</span>
+  <span class="key">"usrgrpid"</span>:      <span class="str">integer|null</span>
+  <span class="key">"grupo_nome"</span>:    <span class="str">string|null</span>
+  <span class="key">"para_todos"</span>:    <span class="str">boolean</span>
   <span class="key">"criado_por"</span>:    <span class="str">{ username: string }</span>
   <span class="key">"inicio"</span>:        <span class="str">string (ISO 8601)</span>
   <span class="key">"fim"</span>:           <span class="str">string (ISO 8601)</span>
@@ -753,141 +551,222 @@
     </section>
 
     <section id="schema-error" style="margin-top:28px">
-      <h3 style="font-size:18px;font-weight:600;margin-bottom:16px">Schema — Error</h3>
-      <div class="code-block">
-        <div class="code-block-header"><span class="code-block-lang">json schema</span></div>
+      <h3 style="font-size:18px;font-weight:600;margin-bottom:16px">Schema &mdash; Error</h3>
+      <div class="code-block"><div class="code-block-header"><span class="code-block-lang">json schema</span></div>
         <pre>{
   <span class="key">"success"</span>:   <span class="bool">false</span>,
   <span class="key">"timestamp"</span>: <span class="str">string (ISO 8601)</span>,
-  <span class="key">"error"</span>: {
-    <span class="key">"code"</span>:    <span class="str">string</span>   <span class="cmt">// UNAUTHORIZED | NOT_FOUND | VALIDATION_ERROR | INTERNAL_ERROR</span>
-    <span class="key">"message"</span>: <span class="str">string</span>
-  },
-  <span class="key">"errors"</span>: [  <span class="cmt">// apenas em VALIDATION_ERROR</span>
-    { <span class="key">"field"</span>: <span class="str">string</span>, <span class="key">"message"</span>: <span class="str">string</span> }
-  ]
+  <span class="key">"error"</span>: { <span class="key">"code"</span>: <span class="str">string</span>, <span class="key">"message"</span>: <span class="str">string</span> },
+  <span class="key">"errors"</span>: [ { <span class="key">"field"</span>: <span class="str">string</span>, <span class="key">"message"</span>: <span class="str">string</span> } ]  <span class="cmt">// apenas em VALIDATION_ERROR</span>
 }</pre>
       </div>
     </section>
 
-    <div style="padding: 40px 0 20px; color: var(--muted); font-size: 12px; text-align:center; border-top: 1px solid var(--border); margin-top: 40px;">
-      Quadro de Avisos v1.4.0 — Zabbix Module API Docs &nbsp;·&nbsp; Rafael M. A. Leão Ereno
+    <div style="padding:40px 0 20px;color:var(--muted);font-size:12px;text-align:center;border-top:1px solid var(--border);margin-top:40px">
+      Quadro de Avisos v1.4.0 &mdash; Zabbix Module API Docs &nbsp;&middot;&nbsp; Rafael M. A. Leao Ereno
     </div>
 
   </main>
 </div>
 
 <script>
-function toggleEndpoint(id) {
-  const body = document.getElementById(id);
-  const icon = document.getElementById(id + '-icon');
-  const isOpen = body.classList.toggle('open');
-  if (icon) icon.textContent = isOpen ? '▼' : '▶';
+var CFG_KEY = 'qa_api_config';
+
+function loadConfig() {
+  try { return JSON.parse(localStorage.getItem(CFG_KEY) || '{}'); } catch(e) { return {}; }
 }
 
-function toggleResponse(id) {
-  const body = document.getElementById(id);
-  const icon = body.previousElementSibling.querySelector('.expand-icon');
-  const isOpen = body.classList.toggle('open');
-  if (icon) icon.textContent = isOpen ? '▼' : '▶';
+function saveConfig() {
+  var url = document.getElementById('cfg-baseurl').value.trim();
+  var key = document.getElementById('cfg-apikey').value.trim();
+  if (!url) { document.getElementById('cfg-baseurl').classList.add('invalid'); return; }
+  document.getElementById('cfg-baseurl').classList.remove('invalid');
+  document.getElementById('cfg-baseurl').classList.add('valid');
+  localStorage.setItem(CFG_KEY, JSON.stringify({ url: url, key: key }));
+  var badge = document.getElementById('saved-badge');
+  badge.classList.add('visible');
+  setTimeout(function() { badge.classList.remove('visible'); }, 2000);
+  applyConfigToAll();
 }
 
-function copyText(text, btn) {
-  navigator.clipboard.writeText(text).then(() => {
-    btn.textContent = '✓ Copiado';
-    setTimeout(() => btn.textContent = 'Copiar', 1500);
+function clearConfig() {
+  localStorage.removeItem(CFG_KEY);
+  document.getElementById('cfg-baseurl').value = '';
+  document.getElementById('cfg-apikey').value  = '';
+  document.getElementById('cfg-baseurl').classList.remove('valid','invalid');
+  applyConfigToAll();
+}
+
+function applyConfigToAll() {
+  var cfg = loadConfig();
+  var url = cfg.url || '';
+  var key = cfg.key || '';
+  var hasUrl = !!url;
+  var hasKey = !!key;
+
+  // Sidebar indicator
+  var dot   = document.getElementById('cfg-dot');
+  var label = document.getElementById('cfg-label');
+  if (hasUrl) {
+    dot.classList.add('ok');
+    var short = url.replace(/^https?:\/\//, '').substring(0, 28);
+    label.textContent = short + (url.length > 28 ? '...' : '');
+  } else {
+    dot.classList.remove('ok');
+    label.textContent = 'Sem configuracao';
+  }
+
+  // Preenche campos Try it out de cada endpoint
+  var endpoints = ['t1','t2','t3'];
+  endpoints.forEach(function(t) {
+    var urlEl  = document.getElementById(t + '-url');
+    var keyEl  = document.getElementById(t + '-key');
+    var urlNote = document.getElementById(t + '-cfg-note');
+    var keyNote = document.getElementById(t + '-key-note');
+    if (urlEl) {
+      urlEl.value = url;
+      urlEl.classList.toggle('cfg-prefilled', hasUrl);
+      if (urlNote) urlNote.textContent = hasUrl ? '(da configuracao)' : '';
+    }
+    if (keyEl) {
+      keyEl.value = key;
+      keyEl.classList.toggle('cfg-prefilled', hasKey);
+      if (keyNote) keyNote.textContent = hasKey ? '(da configuracao)' : '';
+    }
   });
-}
 
-function copyEl(id, btn) {
-  const el = document.getElementById(id);
-  copyText(el.textContent, btn);
-}
-
-function colorStatus(code) {
-  if (code >= 200 && code < 300) return 'color:#3fb950';
-  if (code >= 400 && code < 500) return 'color:#f85149';
-  return 'color:#e3b341';
-}
-
-async function executeGet() {
-  const token  = document.getElementById('t1-token').value.trim();
-  const tipo   = document.getElementById('t1-tipo').value;
-  const status = document.getElementById('t1-status').value;
-  const limit  = document.getElementById('t1-limit').value;
-  let url = document.getElementById('t1-url').value.trim();
-
-  const params = new URLSearchParams();
-  if (tipo)   params.set('tipo_borda', tipo);
-  if (status) params.set('status', status);
-  if (limit)  params.set('limit', limit);
-  const qs = params.toString();
-  if (qs) url += (url.includes('?') ? '&' : '?') + qs;
-
-  await doRequest('GET', url, null, token, 't1-status-out', 't1-body');
-}
-
-async function executeGetById() {
-  const token = document.getElementById('t2-token').value.trim();
-  const id    = document.getElementById('t2-id').value;
-  const url   = document.getElementById('t2-url').value.trim() + id;
-  await doRequest('GET', url, null, token, 't2-status-out', 't2-body');
-}
-
-async function executePost() {
-  const token = document.getElementById('t3-token').value.trim();
-  const url   = document.getElementById('t3-url').value.trim();
-  let body;
-  try { body = JSON.parse(document.getElementById('t3-body').value); }
-  catch(e) { alert('JSON inválido: ' + e.message); return; }
-  await doRequest('POST', url, body, token, 't3-status-out', 't3-body-out');
-}
-
-async function doRequest(method, url, body, token, statusEl, bodyEl) {
-  const statusOut = document.getElementById(statusEl);
-  const bodyOut   = document.getElementById(bodyEl);
-  statusOut.textContent = 'Aguardando...';
-  bodyOut.style.display = 'block';
-  bodyOut.textContent   = '';
-
-  try {
-    const headers = { 'Accept': 'application/json' };
-    if (token) headers['Authorization'] = token.startsWith('Bearer ') ? token : 'Bearer ' + token;
-    if (method === 'POST') headers['Content-Type'] = 'application/json';
-
-    const res = await fetch(url, {
-      method,
-      headers,
-      body: body ? JSON.stringify(body) : undefined,
-    });
-
-    const text = await res.text();
-    let pretty;
-    try { pretty = JSON.stringify(JSON.parse(text), null, 2); } catch { pretty = text; }
-
-    statusOut.innerHTML = `<span style="${colorStatus(res.status)}; font-weight:600">HTTP ${res.status} ${res.statusText}</span>`;
-    bodyOut.textContent = pretty;
-  } catch (e) {
-    statusOut.innerHTML = '<span style="color:#f85149">Erro de rede</span>';
-    bodyOut.textContent = e.message + '\n\nVerifique se a URL está correta e o servidor está acessível.';
+  // Atualiza exemplos curl
+  if (hasUrl) {
+    var u = url.replace(/\/$/, '');
+    setInnerText('curl1-url', '"' + u + '/?tipo_borda=danger&status=active"');
+    setInnerText('curl2-url', '"' + u + '/42"');
+    setInnerText('curl3-url', '"' + u + '/"');
+  }
+  if (hasKey) {
+    var h = '"Authorization: Bearer ' + key + '"';
+    setInnerText('curl1-auth', h);
+    setInnerText('curl2-auth', h);
+    setInnerText('curl3-auth', h);
   }
 }
 
-// Active sidebar nav on scroll
-const sections = ['intro','auth','types','ep-list','ep-getid','ep-create','schema-aviso','schema-error'];
-const items    = document.querySelectorAll('.sidebar-item');
-function updateActive() {
-  let cur = sections[0];
-  sections.forEach(id => {
-    const el = document.getElementById(id);
-    if (el && window.scrollY + 120 >= el.offsetTop) cur = id;
-  });
-  items.forEach(a => {
-    const href = a.getAttribute('href').replace('#','');
-    a.classList.toggle('active', href === cur);
+function setInnerText(id, txt) {
+  var el = document.getElementById(id);
+  if (el) el.textContent = txt;
+}
+
+function toggleEndpoint(id) {
+  var body = document.getElementById(id);
+  var icon = document.getElementById(id + '-icon');
+  var open = body.classList.toggle('open');
+  if (icon) icon.innerHTML = open ? '&#9660;' : '&#9654;';
+}
+
+function toggleResponse(id) {
+  var body = document.getElementById(id);
+  var icon = body.previousElementSibling.querySelector('.expand-icon');
+  var open = body.classList.toggle('open');
+  if (icon) icon.innerHTML = open ? '&#9660;' : '&#9654;';
+}
+
+function copyEl(id, btn) {
+  var el = document.getElementById(id);
+  navigator.clipboard.writeText(el.textContent).then(function() {
+    btn.textContent = 'Copiado!';
+    setTimeout(function() { btn.textContent = 'Copiar'; }, 1500);
   });
 }
-window.addEventListener('scroll', updateActive, {passive: true});
+
+function getHeaders(keyOverride) {
+  var key = keyOverride || (loadConfig().key || '');
+  var h = { 'Accept': 'application/json' };
+  if (key) {
+    h['Authorization'] = key.startsWith('Bearer ') ? key : 'Bearer ' + key;
+    h['X-Api-Token']   = key.replace(/^Bearer\s+/i, '');
+  }
+  return h;
+}
+
+function showResult(statusId, bodyId, code, statusText, text) {
+  var statusOut = document.getElementById(statusId);
+  var bodyOut   = document.getElementById(bodyId);
+  var color = code >= 200 && code < 300 ? 'var(--green)' : code >= 400 ? 'var(--red)' : 'var(--orange)';
+  statusOut.innerHTML = '<span style="color:' + color + ';font-weight:600">HTTP ' + code + ' ' + statusText + '</span>';
+  var pretty;
+  try { pretty = JSON.stringify(JSON.parse(text), null, 2); } catch(e) { pretty = text; }
+  bodyOut.textContent = pretty;
+  bodyOut.style.display = 'block';
+}
+
+async function doRequest(method, url, body, keyOverride, statusId, bodyId) {
+  document.getElementById(statusId).textContent = 'Aguardando...';
+  document.getElementById(bodyId).style.display  = 'block';
+  document.getElementById(bodyId).textContent    = '';
+  try {
+    var headers = getHeaders(keyOverride);
+    if (method === 'POST') headers['Content-Type'] = 'application/json';
+    var res = await fetch(url, { method: method, headers: headers, body: body ? JSON.stringify(body) : undefined });
+    var text = await res.text();
+    showResult(statusId, bodyId, res.status, res.statusText, text);
+  } catch(e) {
+    document.getElementById(statusId).innerHTML = '<span style="color:var(--red)">Erro de rede</span>';
+    document.getElementById(bodyId).textContent = e.message + '\n\nVerifique a URL e se o servidor esta acessivel.';
+  }
+}
+
+async function executeGet() {
+  var url = document.getElementById('t1-url').value.trim().replace(/\/$/, '') + '/';
+  var key = document.getElementById('t1-key').value.trim();
+  var params = new URLSearchParams();
+  var tipo   = document.getElementById('t1-tipo').value;
+  var status = document.getElementById('t1-status').value;
+  var limit  = document.getElementById('t1-limit').value;
+  var offset = document.getElementById('t1-offset').value;
+  if (tipo)   params.set('tipo_borda', tipo);
+  if (status) params.set('status', status);
+  if (limit)  params.set('limit', limit);
+  if (offset) params.set('offset', offset);
+  var qs = params.toString();
+  if (qs) url += '?' + qs;
+  await doRequest('GET', url, null, key, 't1-status-out', 't1-body');
+}
+
+async function executeGetById() {
+  var base = document.getElementById('t2-url').value.trim().replace(/\/$/, '') + '/';
+  var id   = document.getElementById('t2-id').value;
+  var key  = document.getElementById('t2-key').value.trim();
+  await doRequest('GET', base + id, null, key, 't2-status-out', 't2-body');
+}
+
+async function executePost() {
+  var url = document.getElementById('t3-url').value.trim().replace(/\/$/, '') + '/';
+  var key = document.getElementById('t3-key').value.trim();
+  var raw = document.getElementById('t3-body').value;
+  var body;
+  try { body = JSON.parse(raw); } catch(e) { alert('JSON invalido: ' + e.message); return; }
+  await doRequest('POST', url, body, key, 't3-status-out', 't3-body-out');
+}
+
+// Preenche formulario de config e aplica ao carregar
+window.addEventListener('DOMContentLoaded', function() {
+  var cfg = loadConfig();
+  if (cfg.url) document.getElementById('cfg-baseurl').value = cfg.url;
+  if (cfg.key) document.getElementById('cfg-apikey').value  = cfg.key;
+  applyConfigToAll();
+});
+
+// Active sidebar nav
+var sections = ['config','intro','auth','types','ep-list','ep-getid','ep-create','schema-aviso','schema-error'];
+window.addEventListener('scroll', function() {
+  var cur = sections[0];
+  sections.forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el && window.scrollY + 120 >= el.offsetTop) cur = id;
+  });
+  document.querySelectorAll('.sidebar-item').forEach(function(a) {
+    a.classList.toggle('active', a.getAttribute('href') === '#' + cur);
+  });
+}, { passive: true });
 </script>
 </body>
 </html>
