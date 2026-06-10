@@ -182,3 +182,9 @@ Modulo livre - fork and be happy
 If this module was useful for you or your team, consider supporting development!
 
 https://www.buymeacoffee.com/leaoereno
+
+## Créditos
+- **Mantenedor do fork:** Rafael M. A. Leão Ereno (MALE)
+- **LinkedIn:** https://www.linkedin.com/in/leaoereno/
+- **Projeto original:** NOC Team
+- **Inspirado no projeto da Monzphere**

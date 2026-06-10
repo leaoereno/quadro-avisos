@@ -5,13 +5,15 @@
     "version": "1.4.0",
     "namespace": "NoticeBoardModule",
     "description": "Notice board module for communicating incidents, change requests and events to teams using Zabbix. Supports Markdown/HTML, scheduling, user group filtering and themed cards.",
-    "author": "Rafael M. A. Leao Ereno",
+    "author": "Rafael M. A. Leão Ereno - MALE",
     "author_email": "leao@leaoereno.com.br",
     "author_linkedin": "https://www.linkedin.com/in/leaoereno/",
-    "url": "https://github.com/leaoereno/module-zbx-notice-board",
+    "url": "https://www.linkedin.com/in/leaoereno/",
     "license": "Modulo livre - fork and be happy",
     "assets": {
-        "css": ["notice_board.css"]
+        "css": [
+            "notice_board.css"
+        ]
     },
     "actions": {
         "notice_board.dashboard": {
