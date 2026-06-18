@@ -128,11 +128,42 @@ $currentUser  = (int) $data['user_id'];
 
 <script>
 (function () {
+    // Renders raw HTML (which may include its own <style>) inside a sandboxed
+    // iframe instead of innerHTML, so generic selectors in a notice's <style>
+    // (e.g. .wrapper, header, .card) never leak out and override the host
+    // page's own layout. Height auto-fits the content once it loads. A hidden
+    // text mirror is kept so applyFilters() can still search inside it.
+    function renderIsolatedHtml(container, html) {
+        container.innerHTML = '';
+        var frame = document.createElement('iframe');
+        frame.setAttribute('sandbox', 'allow-same-origin');
+        frame.style.cssText = 'width:100%;border:0;display:block;overflow:hidden;height:0;';
+        container.appendChild(frame);
+        frame.addEventListener('load', function () {
+            try {
+                var doc = frame.contentDocument;
+                var h = Math.max(
+                    doc.documentElement ? doc.documentElement.scrollHeight : 0,
+                    doc.body ? doc.body.scrollHeight : 0
+                );
+                frame.style.height = h + 'px';
+
+                var mirror = document.createElement('span');
+                mirror.className = 'nb-search-mirror';
+                mirror.style.display = 'none';
+                mirror.textContent = doc.body ? doc.body.textContent : '';
+                container.appendChild(mirror);
+            } catch (e) {
+                frame.style.height = '300px';
+            }
+        });
+        frame.srcdoc = html;
+    }
     function renderRaw(el) {
         var raw = (el.getAttribute('data-raw') || '').trim();
         if (!raw) { el.removeAttribute('data-raw'); return true; }
         if (raw.charAt(0) === '<') {
-            el.innerHTML = raw;
+            renderIsolatedHtml(el, raw);
             el.removeAttribute('data-raw');
             return true;
         }
