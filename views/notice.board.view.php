@@ -129,22 +129,31 @@ $currentUser  = (int) $data['user_id'];
 <script>
 (function () {
     function renderRaw(el) {
-        var raw = el.getAttribute('data-raw') || '';
-        if (!raw) return;
-        el.innerHTML = raw.trim().charAt(0) === '<'
-            ? raw
-            : (window.marked ? marked.parse(raw, {breaks: true, gfm: true}) : raw);
-        el.removeAttribute('data-raw');
+        var raw = (el.getAttribute('data-raw') || '').trim();
+        if (!raw) { el.removeAttribute('data-raw'); return true; }
+        if (raw.charAt(0) === '<') {
+            el.innerHTML = raw;
+            el.removeAttribute('data-raw');
+            return true;
+        }
+        if (window.marked) {
+            el.innerHTML = marked.parse(raw, {breaks: true, gfm: true});
+            el.removeAttribute('data-raw');
+            return true;
+        }
+        return false; // needs marked.js, still pending
     }
     function loadMarkedAndRender() {
-        if (window.marked) {
-            document.querySelectorAll('.nb-rendered[data-raw]').forEach(renderRaw);
-            return;
-        }
+        var pending = [];
+        document.querySelectorAll('.nb-rendered[data-raw]').forEach(function (el) {
+            if (!renderRaw(el)) pending.push(el);
+        });
+        if (!pending.length) return;
+
         var s = document.createElement('script');
         s.src = 'https://cdn.jsdelivr.net/npm/marked/marked.min.js';
         s.onload = function () {
-            document.querySelectorAll('.nb-rendered[data-raw]').forEach(renderRaw);
+            pending.forEach(renderRaw);
         };
         document.head.appendChild(s);
     }

@@ -22,17 +22,33 @@
         document.head.appendChild(s);
     }
 
-    function renderContent(raw) {
-        if (!raw) return '';
-        var trimmed = raw.trim();
-        return trimmed.charAt(0) === '<' ? trimmed : (window.marked ? window.marked.parse(trimmed) : trimmed);
-    }
-
-    // Render all .nb-rendered elements that have a data-raw attribute
+    // Render all .nb-rendered elements that have a data-raw attribute.
+    // HTML content (starts with "<") never needs marked.js, so it renders
+    // immediately instead of waiting on the CDN script — if that script
+    // fails to load (no internet egress, F5, CSP, etc.) HTML notices no
+    // longer get stuck unrendered.
     window.nbRenderAll = function () {
+        var pending = [];
+
+        document.querySelectorAll('.nb-rendered[data-raw]').forEach(function (el) {
+            var raw = (el.getAttribute('data-raw') || '').trim();
+            if (!raw) {
+                el.removeAttribute('data-raw');
+                return;
+            }
+            if (raw.charAt(0) === '<') {
+                el.innerHTML = raw;
+                el.removeAttribute('data-raw');
+            } else {
+                pending.push(el);
+            }
+        });
+
+        if (!pending.length) return;
+
         loadMarked(function () {
-            document.querySelectorAll('.nb-rendered[data-raw]').forEach(function (el) {
-                el.innerHTML = renderContent(el.getAttribute('data-raw') || '');
+            pending.forEach(function (el) {
+                el.innerHTML = window.marked.parse(el.getAttribute('data-raw') || '', {breaks: true, gfm: true});
                 el.removeAttribute('data-raw');
             });
         });

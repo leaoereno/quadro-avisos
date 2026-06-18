@@ -96,30 +96,48 @@ $type_labels = [
     }
 
     function renderRaw(el) {
-        var raw = el.getAttribute('data-raw') || '';
-        if (!raw) return;
-        el.innerHTML = raw.trim().charAt(0) === '<' ? raw : marked.parse(raw, {breaks: true, gfm: true});
-        el.removeAttribute('data-raw');
+        var raw = (el.getAttribute('data-raw') || '').trim();
+        if (!raw) { el.removeAttribute('data-raw'); return true; }
+        if (raw.charAt(0) === '<') {
+            el.innerHTML = raw;
+            el.removeAttribute('data-raw');
+            return true;
+        }
+        if (window.marked) {
+            el.innerHTML = marked.parse(raw, {breaks: true, gfm: true});
+            el.removeAttribute('data-raw');
+            return true;
+        }
+        return false; // needs marked.js, still pending
+    }
+
+    function renderInto(targetEl, content) {
+        var trimmed = (content || '').trim();
+        if (!trimmed) { targetEl.innerHTML = ''; return; }
+        if (trimmed.charAt(0) === '<') {
+            targetEl.innerHTML = trimmed;
+            return;
+        }
+        loadMarked(function () {
+            targetEl.innerHTML = marked.parse(trimmed, {breaks: true, gfm: true});
+        });
     }
 
     window.nbOpenModal = function (card) {
-        loadMarked(function () {
-            var tipo    = card.dataset.tipo || 'info';
-            var content = card.dataset.conteudo || '';
-            var modal   = document.getElementById('nb-modal');
-            modal.className = 'nb-modal nb-modal--' + tipo;
-            document.getElementById('nb-modal-badge').textContent  = card.dataset.badge || '';
-            document.getElementById('nb-modal-badge').className    = 'nb-badge nb-badge--' + tipo;
-            document.getElementById('nb-modal-fim').textContent    = card.dataset.fim || '';
-            document.getElementById('nb-modal-title').textContent  = card.dataset.titulo || '';
-            document.getElementById('nb-modal-body').innerHTML     = content.trim().charAt(0) === '<'
-                ? content
-                : marked.parse(content, {breaks: true, gfm: true});
-            document.getElementById('nb-modal-usuario').textContent = '&#128100; ' + (card.dataset.usuario || '');
-            document.getElementById('nb-modal-criado').textContent  = '&#128336; ' + (card.dataset.criado || '');
-            document.getElementById('nb-modal-overlay').classList.add('nb-open');
-            document.body.style.overflow = 'hidden';
-        });
+        var tipo    = card.dataset.tipo || 'info';
+        var content = card.dataset.conteudo || '';
+        var modal   = document.getElementById('nb-modal');
+        modal.className = 'nb-modal nb-modal--' + tipo;
+        document.getElementById('nb-modal-badge').textContent  = card.dataset.badge || '';
+        document.getElementById('nb-modal-badge').className    = 'nb-badge nb-badge--' + tipo;
+        document.getElementById('nb-modal-fim').textContent    = card.dataset.fim || '';
+        document.getElementById('nb-modal-title').textContent  = card.dataset.titulo || '';
+        document.getElementById('nb-modal-usuario').textContent = '&#128100; ' + (card.dataset.usuario || '');
+        document.getElementById('nb-modal-criado').textContent  = '&#128336; ' + (card.dataset.criado || '');
+        document.getElementById('nb-modal-overlay').classList.add('nb-open');
+        document.body.style.overflow = 'hidden';
+
+        renderInto(document.getElementById('nb-modal-body'), content);
     };
 
     window.nbCloseModal = function (event) {
@@ -133,9 +151,15 @@ $type_labels = [
     });
 
     document.addEventListener('DOMContentLoaded', function () {
-        loadMarked(function () {
-            document.querySelectorAll('.nb-rendered[data-raw]').forEach(renderRaw);
+        var pending = [];
+        document.querySelectorAll('.nb-rendered[data-raw]').forEach(function (el) {
+            if (!renderRaw(el)) pending.push(el);
         });
+        if (pending.length) {
+            loadMarked(function () {
+                pending.forEach(renderRaw);
+            });
+        }
     });
 }());
 </script>
