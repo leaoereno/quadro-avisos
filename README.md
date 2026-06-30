@@ -1,53 +1,58 @@
-# module-zbx-notice-board
+# Quadro de Avisos
 
-Zabbix 7.0 LTS module for communicating incidents, change requests and events
-to teams directly inside Zabbix. Supports Markdown/HTML, scheduling,
-user group filtering and themed cards.
-
----
-
-## Features
-
-### Dashboard Widget
-- Widget available at **Dashboard > Notice Board**
-- Shows only **active** notices (within the inicio/fim window)
-- Respects the **usergroup** of the logged-in user
-- Click-to-expand modal with full content
-- CSS adapts to the user theme (dark / blue / default / high-contrast)
-
-### Admin Menu
-- New **Notice Board** menu item under **Monitoring** (all users) and **Administration** (Super Admin)
-- Visible to **Admin** (type 2) and **Super Admin** (type 3) in admin mode
-- List all notices with search, type and status filters
-- Create, edit and delete per card
-
-### Notice Form
-- **Markdown and HTML** support in content
-- Editor with tabs: Editor / Preview / Split
-- Live card preview before saving
-- Border type / severity:
-  - `info`    -- Informational (blue)
-  - `success` -- Resolved (green)
-  - `warning` -- Warning (yellow)
-  - `danger`  -- Critical / Urgent (red)
-  - `mudanca` -- Change Request (purple)
-  - `evento`  -- Event / Maintenance (cyan)
-- Scheduling: display from/until
-- User group selection (single for Admin, multi for Super Admin)
-
-### REST API (v1.4.0)
-- `GET  /api/avisos`       -- List notices with filters and pagination
-- `GET  /api/avisos/{id}`  -- Get notice by ID
-- `POST /api/avisos`       -- Create notice from external source
-- Bearer Token / X-Api-Token authentication
-- `source` field to identify remote origin (Grafana, ServiceNow, etc.)
-- Interactive Swagger UI at `api/docs.html`
+Módulo para Zabbix 7.0 LTS para comunicação de incidentes, requisições de mudança e eventos
+para as equipes diretamente dentro do Zabbix. Suporta Markdown/HTML, agendamento,
+filtro por grupo de usuários e cards com temas.
 
 ---
 
-## File Structure
+## Funcionalidades
 
-```
+### Widget de Dashboard
+
+* Widget disponível em **Dashboard > Notice Board**
+* Exibe apenas avisos **ativos** dentro da janela de início/fim
+* Respeita o **grupo de usuários** do usuário logado
+* Modal com clique para expandir e visualizar o conteúdo completo
+* CSS adaptado ao tema do usuário: escuro / azul / padrão / alto contraste
+
+### Menu Administrativo
+
+* Novo item de menu **Notice Board** em **Monitoring** para todos os usuários e em **Administration** para Super Admin
+* Visível para **Admin** tipo 2 e **Super Admin** tipo 3 no modo administrativo
+* Lista todos os avisos com filtros de busca, tipo e status
+* Permite criar, editar e excluir cada card
+
+### Formulário de Aviso
+
+* Suporte a **Markdown e HTML** no conteúdo
+* Editor com abas: Editor / Pré-visualização / Dividido
+* Pré-visualização do card em tempo real antes de salvar
+* Tipo de borda / severidade:
+
+  * `info`    -- Informativo azul
+  * `success` -- Resolvido verde
+  * `warning` -- Atenção amarelo
+  * `danger`  -- Crítico / Urgente vermelho
+  * `mudanca` -- Requisição de Mudança roxo
+  * `evento`  -- Evento / Manutenção ciano
+* Agendamento: exibição de/até
+* Seleção de grupo de usuários: único para Admin, múltiplo para Super Admin
+
+### API REST v1.4.0
+
+* `GET  /api/avisos`       -- Lista avisos com filtros e paginação
+* `GET  /api/avisos/{id}`  -- Obtém aviso pelo ID
+* `POST /api/avisos`       -- Cria aviso a partir de fonte externa
+* Autenticação via Bearer Token / X-Api-Token
+* Campo `source` para identificar a origem remota: Grafana, ServiceNow, etc.
+* Swagger UI interativo em `api/docs.html`
+
+---
+
+## Estrutura de Arquivos
+
+```text
 modules/module-zbx-notice-board/
 +-- manifest.json
 +-- Module.php
@@ -80,98 +85,106 @@ modules/module-zbx-notice-board/
 
 ---
 
-## Installation
+## Instalação
 
-### Fresh install
+### Instalação nova
 
-#### 1. Database
+#### 1. Banco de dados
+
 ```bash
 mysql -u root -p zabbix < /path/to/modules/module-zbx-notice-board/install.sql
 ```
 
-#### 2. Copy the module
+#### 2. Copiar o módulo
+
 ```bash
 cp -r module-zbx-notice-board /usr/share/zabbix/modules/
 chown -R www-data:www-data /usr/share/zabbix/modules/module-zbx-notice-board
 ```
 
-#### 3. Enable in Zabbix
-1. Go to **Administration > General > Modules**
-2. Find **Notice Board** and click **Enable**
+#### 3. Habilitar no Zabbix
 
-#### 4. Add widget to Dashboard
-1. Go to a **Dashboard** > **Edit**
-2. Click **Add Widget** > choose **Notice Board**
+1. Acesse **Administration > General > Modules**
+2. Localize **Notice Board** e clique em **Enable**
+
+#### 4. Adicionar o widget ao Dashboard
+
+1. Acesse um **Dashboard** > **Edit**
+2. Clique em **Add Widget** > escolha **Notice Board**
 
 ---
 
-## Upgrading from quadro-avisos
+## Atualização a partir do quadro-avisos
 
-### From v1.2 to v1.3.1 (adds para_todos column)
+### Da versão v1.2 para v1.3.1 adiciona a coluna para_todos
+
 ```bash
 mysql -u root -p zabbix < api/migrate_v1.2_to_v1.3.1.sql
 ```
 
-### From v1.3.1 to v1.4.0 (renames table, adds source column)
+### Da versão v1.3.1 para v1.4.0 renomeia a tabela e adiciona a coluna source
+
 ```bash
 mysql -u root -p zabbix < api/migrate_v1.4.sql
 ```
 
 ---
 
-## Permissions
+## Permissões
 
-| Action                  | User | Admin | Super Admin |
-|-------------------------|------|-------|-------------|
-| View widget             |  v   |   v   |      v      |
-| View Notice Board menu  |  x   |   v   |      v      |
-| Create / Edit notice    |  x   |  v*   |      v      |
-| Delete notice           |  x   |  v*   |      v      |
-| Manage any group        |  x   |   x   |      v      |
+| Ação                         | Usuário | Admin | Super Admin |
+| ---------------------------- | ------- | ----- | ----------- |
+| Visualizar widget            | v       | v     | v           |
+| Visualizar menu Notice Board | x       | v     | v           |
+| Criar / Editar aviso         | x       | v*    | v           |
+| Excluir aviso                | x       | v*    | v           |
+| Gerenciar qualquer grupo     | x       | x     | v           |
 
-*Admin can only manage notices they created, within their own groups.*
+*Admin só pode gerenciar avisos criados por ele, dentro de seus próprios grupos.*
 
 ---
 
 ## API
 
-Configure the token in `api/index.php`:
+Configure o token em `api/index.php`:
+
 ```php
 $API_TOKENS = [
     'your-secret-token',
 ];
 ```
 
-Open the Swagger UI at:
-```
+Abra o Swagger UI em:
+
+```text
 http://your-zabbix/zabbix/modules/module-zbx-notice-board/api/docs.html
 ```
 
 ---
 
-## Dependencies
+## Dependências
 
-- **marked.js** loaded via CDN for Markdown rendering.
-  For air-gap environments, download and place at `assets/js/marked.min.js`
-  then update the CDN URL in `assets/js/notice_board.js`.
-
----
-
-## Compatibility
-
-- **Zabbix:** 7.0 LTS
-- **PHP:** 8.0+
-- **MySQL / MariaDB:** 5.7+ / 10.3+
-- **Browsers:** Chrome 90+, Firefox 88+, Edge 90+
+* **marked.js** carregado via CDN para renderização de Markdown.
+  Para ambientes air-gap, baixe e coloque em `assets/js/marked.min.js`
+  e então atualize a URL do CDN em `assets/js/notice_board.js`.
 
 ---
 
-## License
+## Compatibilidade
 
-Modulo livre - fork and be happy
+* **Zabbix:** 7.0 LTS
+* **PHP:** 8.0+
+* **MySQL / MariaDB:** 5.7+ / 10.3+
+* **Navegadores:** Chrome 90+, Firefox 88+, Edge 90+
 
-**Author:** Rafael M. A. Leao Ereno
-**Email:** leao@leaoereno.com.br
+---
+
+## Licença
+
+Módulo livre — faça um fork e seja feliz
+
+**Autor:** Rafael M. A. Leão Ereno
+**Email:** [leao@leaoereno.com.br](mailto:leao@leaoereno.com.br)
 **LinkedIn:** https://www.linkedin.com/in/leaoereno/
 **GitHub:** https://github.com/leaoereno/module-zbx-notice-board
 
@@ -179,12 +192,12 @@ Modulo livre - fork and be happy
 
 ## Buy me a Coffee
 
-If this module was useful for you or your team, consider supporting development!
+Se este módulo foi útil para você ou para sua equipe, considere apoiar o desenvolvimento!
 
 https://www.buymeacoffee.com/leaoereno
 
 ## Créditos
-- **Mantenedor do fork:** Rafael M. A. Leão Ereno (MALE)
-- **LinkedIn:** https://www.linkedin.com/in/leaoereno/
-- **Projeto original:** NOC Team
-- **Inspirado no projeto da Monzphere**
+
+* **Mantenedor do fork:** Rafael M. A. Leão Ereno (MALE)
+* **LinkedIn:** https://www.linkedin.com/in/leaoereno/
+
