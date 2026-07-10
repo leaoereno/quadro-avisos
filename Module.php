@@ -10,6 +10,8 @@ use CView;
 class Module extends CModule {
 
     public function init(): void {
+        // Guard umbrella Informativos
+        if (defined('ZBX_INFORMATIVOS_ACTIVE') && ZBX_INFORMATIVOS_ACTIVE === true) { return; }
         CView::registerDirectory(__DIR__ . '/views');
 
         try {
